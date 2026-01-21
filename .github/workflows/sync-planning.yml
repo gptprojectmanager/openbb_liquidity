@@ -8,9 +8,6 @@ name: Sync Planning
 
 jobs:
   sync:
-    permissions:
-      issues: write
-      contents: read
     uses: gptcompany/claude-config/.github/workflows/_reusable-sync-planning.yml@main
     secrets: inherit
     with:
