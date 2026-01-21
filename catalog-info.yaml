@@ -1,0 +1,26 @@
+# Backstage Catalog Info
+# Auto-synced with Backstage at https://backstage.princyx.xyz
+
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: openbb-liquidity
+  description: Global Liquidity Monitor - Fed/ECB/BoJ/PBoC tracking with Hayes framework
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: gptcompany/openbb_liquidity
+    github.com/workflows-folder: .github/workflows
+  tags:
+    - python
+    - finance
+    - macro
+    - openbb
+  links:
+    - url: https://github.com/gptcompany/openbb_liquidity
+      title: GitHub
+      icon: github
+spec:
+  type: service
+  lifecycle: experimental
+  owner: user:default/sam
+  system: trading-infrastructure
