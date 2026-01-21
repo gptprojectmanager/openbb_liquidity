@@ -186,7 +186,7 @@ class FredCollector(BaseCollector[pd.DataFrame]):
         logger.info("Fetching FRED series: %s", symbols)
 
         # Fetch data using OpenBB
-        result = obb.economy.fred_series(  # type: ignore[union-attr]
+        result = obb.economy.fred_series(
             symbol=",".join(symbols),
             start_date=start_date.strftime("%Y-%m-%d"),
             end_date=end_date.strftime("%Y-%m-%d"),
