@@ -39,6 +39,8 @@ A FAANG-grade global liquidity monitoring system based on Arthur Hayes' framewor
 
 ## Context
 
+**Reference implementation:** `.planning/reference/appscript_v3.4.1.md` — Apps Script da portare (Stealth QE formula, thresholds, FRED series codes)
+
 **Origin:** Arthur Hayes "Frowny Cloud" article analysis showing Bitcoin correlation with dollar liquidity (0.7-0.8).
 
 **Current state:** Google Apps Script v3.4.1 exists with basic Fed/ECB/BoJ tracking but has:
