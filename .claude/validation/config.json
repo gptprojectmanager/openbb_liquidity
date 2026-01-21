@@ -1,0 +1,29 @@
+{
+  "domain": "finance",
+  "anti_patterns": [
+    "hardcoded_api_keys",
+    "missing_error_handling",
+    "blocking_io_in_async",
+    "raw_sql_injection"
+  ],
+  "research_keywords": {
+    "trigger": [
+      "FRED API",
+      "ECB SDW",
+      "BIS SDMX",
+      "central bank",
+      "liquidity index",
+      "Hayes formula"
+    ],
+    "skip": [
+      "basic_python",
+      "simple_fix",
+      "plotly_chart"
+    ]
+  },
+  "quality_gates": {
+    "min_test_coverage": 80,
+    "max_complexity": 10,
+    "require_docstrings": true
+  }
+}
