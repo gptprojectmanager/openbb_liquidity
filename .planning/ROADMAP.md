@@ -37,7 +37,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: TBD
 
 Plans:
-- [ ] 01-01: Project scaffolding (uv, OpenBB, QuestDB, structure)
+- [x] 01-01: Project scaffolding (uv, OpenBB, QuestDB, structure)
 - [ ] 01-02: FRED API collector base + Fed balance sheet (WALCL, TGA, RRP)
 - [ ] 01-03: MOVE, VIX, yield curve, credit spreads collectors
 
@@ -165,7 +165,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Core Data | 0/3 | Not started | - |
+| 1. Foundation & Core Data | 1/3 | In progress | - |
 | 2. Global CB Collectors | 0/4 | Not started | - |
 | 3. Overnight Rates & FX | 0/3 | Not started | - |
 | 4. Market Indicators | 0/2 | Not started | - |

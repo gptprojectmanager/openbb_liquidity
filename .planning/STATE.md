@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-21)
 ## Current Position
 
 Phase: 1 of 10 (Foundation & Core Data)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-21 — Project initialized
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-01-21 — Completed 01-01-PLAN.md
 
-Progress: ░░░░░░░░░░ 0%
+Progress: █░░░░░░░░░ 3%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: —
-- Total execution time: 0 hours
+- Total plans completed: 1
+- Average duration: 8 min
+- Total execution time: 0.13 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| — | — | — | — |
+| 1 | 1/3 | 8 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: —
-- Trend: —
+- Last 5 plans: 01-01 (8 min)
+- Trend: Starting
 
 ## Accumulated Context
 
@@ -40,7 +40,11 @@ Progress: ░░░░░░░░░░ 0%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-(None yet)
+| Plan | Decision | Rationale |
+|------|----------|-----------|
+| 01-01 | purgatory 0.7.x not 1.x | Version 1.0+ doesn't exist yet |
+| 01-01 | Added setuptools runtime dep | Required by purgatory for pkg_resources |
+| 01-01 | Generic[T] for BaseCollector | Type-safe collector implementations |
 
 ### Pending Todos
 
@@ -48,10 +52,10 @@ None yet.
 
 ### Blockers/Concerns
 
-None yet.
+- purgatory shows deprecation warning for pkg_resources (library issue, not ours)
 
 ## Session Continuity
 
-Last session: 2026-01-21 21:00
-Stopped at: Project initialization complete
+Last session: 2026-01-21 19:56
+Stopped at: Completed 01-01-PLAN.md (project scaffolding)
 Resume file: None
