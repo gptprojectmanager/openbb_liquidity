@@ -62,7 +62,44 @@
       "timestamp": "2026-01-21T22:49:36.988969",
       "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/fred.py",
       "old_string": "    async def collect(\n        self,\n        symbols: list[str] | None = None,\n        start_date: d..."
+    },
+    {
+      "operation": "grep",
+      "timestamp": "2026-01-21T22:49:45.119222",
+      "pattern": "SIMPLIFY|code-simplifier",
+      "path": "/home/sam/.claude/get-shit-done",
+      "output_mode": "content"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T22:49:55.741979",
+      "command": "git checkout -- src/liquidity/collectors/fred.py src/liquidity/collectors/yahoo.py src/liquidity/storage/questdb.py 2>&1",
+      "description": "Revert simplifier changes that introduced bugs"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-21T22:49:57.929544",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/fred.py",
+      "old_string": "    @staticmethod\n    def calculate_net_liquidity(df: pd.DataFrame) -> pd.DataFrame:\n        \"\"\"Calc..."
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T22:50:00.495001",
+      "command": "uv run pytest tests/unit/ -q 2>&1 | tail -5",
+      "description": "Verify tests pass after revert"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-21T22:50:14.454258",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/fred.py",
+      "old_string": "    @staticmethod\n    def calculate_yield_spread(df: pd.DataFrame) -> pd.DataFrame:\n        \"\"\"Calcu..."
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-21T22:50:34.270386",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/fred.py",
+      "old_string": "    async def collect_volatility(\n        self,\n        start_date: datetime | None = None,\n        ..."
     }
   ],
-  "last_updated": "2026-01-21T22:49:36.988994"
+  "last_updated": "2026-01-21T22:50:34.270408"
 }

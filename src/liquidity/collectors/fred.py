@@ -264,21 +264,18 @@ class FredCollector(BaseCollector[pd.DataFrame]):
         pivot = df.pivot(index="timestamp", columns="series_id", values="value")
 
         # Convert units: WLRRAL and WDTGAL are in billions, convert to millions
-        walcl = pivot["WALCL"]  # Already in millions
-        rrp = pivot["WLRRAL"] * 1000  # Convert billions to millions
-        tga = pivot["WDTGAL"] * 1000  # Convert billions to millions
-
-        # Hayes formula
-        net_liquidity = walcl - rrp - tga
+        # Hayes formula: WALCL - RRP - TGA
+        net_liquidity = (
+            pivot["WALCL"] - (pivot["WLRRAL"] * 1000) - (pivot["WDTGAL"] * 1000)
+        )
 
         result = pd.DataFrame(
             {
                 "timestamp": net_liquidity.index,
                 "net_liquidity": net_liquidity.values,
+                "unit": "millions_usd",
             }
         ).dropna()
-
-        result["unit"] = "millions_usd"
 
         logger.info(
             "Calculated Net Liquidity: min=%.0f, max=%.0f, latest=%.0f (millions USD)",
@@ -312,18 +309,15 @@ class FredCollector(BaseCollector[pd.DataFrame]):
 
         # Pivot to wide format for calculation
         pivot = df.pivot(index="timestamp", columns="series_id", values="value")
-
-        # Calculate spread
         yield_spread = pivot["DGS10"] - pivot["DGS2"]
 
         result = pd.DataFrame(
             {
                 "timestamp": yield_spread.index,
                 "yield_spread": yield_spread.values,
+                "unit": "percent",
             }
         ).dropna()
-
-        result["unit"] = "percent"
 
         logger.info(
             "Calculated Yield Spread: min=%.2f, max=%.2f, latest=%.2f (percent)",
@@ -348,8 +342,7 @@ class FredCollector(BaseCollector[pd.DataFrame]):
         Returns:
             DataFrame with volatility data.
         """
-        symbols = ["VIXCLS", "VXVCLS"]
-        return await self.collect(symbols, start_date, end_date)
+        return await self.collect(["VIXCLS", "VXVCLS"], start_date, end_date)
 
     async def collect_yields(
         self,
@@ -367,8 +360,7 @@ class FredCollector(BaseCollector[pd.DataFrame]):
         Returns:
             DataFrame with yield curve data.
         """
-        symbols = ["DGS2", "DGS10", "T10Y2Y"]
-        return await self.collect(symbols, start_date, end_date)
+        return await self.collect(["DGS2", "DGS10", "T10Y2Y"], start_date, end_date)
 
     async def collect_credit(
         self,
@@ -386,8 +378,7 @@ class FredCollector(BaseCollector[pd.DataFrame]):
         Returns:
             DataFrame with credit spread data (in basis points).
         """
-        symbols = ["BAMLH0A0HYM2", "BAMLC0A0CM"]
-        return await self.collect(symbols, start_date, end_date)
+        return await self.collect(["BAMLH0A0HYM2", "BAMLC0A0CM"], start_date, end_date)
 
 
 # Register collector with the registry
