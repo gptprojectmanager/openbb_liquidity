@@ -420,23 +420,159 @@ settings = Settings()
 
 </sota_updates>
 
+<deep_dive_verification>
+## Deep Dive Verification (2026-01-21)
+
+### 1. OpenBB Async Support — VERIFIED
+
+**Finding:** OpenBB SDK is **synchronous only**. No native async/await support.
+
+**Verified approach:** Wrap sync OpenBB calls in `asyncio.to_thread()` for async contexts:
+```python
+import asyncio
+from openbb import obb
+
+async def fetch_fred_async(symbols: list[str]):
+    """Wrap sync OpenBB call for async compatibility."""
+    return await asyncio.to_thread(
+        obb.economy.fred_series, symbols, provider="fred"
+    )
+```
+
+**Alternative:** Use OpenBB's REST API with async httpx:
+```python
+# OpenBB exposes FastAPI: uvicorn openbb_core.api.rest_api:app --port 8000
+async with httpx.AsyncClient() as client:
+    response = await client.get("http://localhost:8000/economy/fred_series?symbol=WALCL")
+```
+
+**Recommendation:** Use `asyncio.to_thread()` for simplicity. REST API only if scaling to many concurrent requests.
+
+### 2. NautilusTrader Integration — VERIFIED
+
+**Finding:** NautilusTrader uses **Redis Streams** (not PubSub) for external message publishing.
+
+**Key architecture points:**
+- MessageBus can be backed by Redis for external message publishing
+- Uses MPSC channels internally, Redis Streams for persistence
+- Minimum Redis version: 6.2 (required for streams)
+- Default serialization: msgpack (best performance), json optional for debugging
+
+**Custom Data Pattern:**
+```python
+# Source: NautilusTrader docs - custom data types
+from nautilus_trader.model.data import Data, DataType, CustomData
+from nautilus_trader.common.actor import Actor
+from nautilus_trader.config import ActorConfig
+
+class LiquidityRegime(Data):
+    """Custom data type for liquidity regime."""
+    def __init__(
+        self,
+        regime: str,  # "expansionary" | "neutral" | "contractionary"
+        net_liquidity: float,
+        ts_event: int,
+        ts_init: int,
+    ):
+        super().__init__()
+        self.regime = regime
+        self.net_liquidity = net_liquidity
+        self._ts_event = ts_event
+        self._ts_init = ts_init
+
+class MacroFilterActor(Actor):
+    """Actor that receives liquidity regime updates."""
+    def on_start(self) -> None:
+        # Subscribe to custom data type
+        self.subscribe_data(DataType(LiquidityRegime))
+
+    def on_data(self, data: Data) -> None:
+        if isinstance(data, LiquidityRegime):
+            self.log.info(f"Regime: {data.regime}, Net Liquidity: {data.net_liquidity}")
+```
+
+**MessageBus Configuration:**
+```python
+from nautilus_trader.config import MessageBusConfig, DatabaseConfig
+
+message_bus_config = MessageBusConfig(
+    database=DatabaseConfig(
+        type="redis",
+        host="localhost",
+        port=6379,
+        timeout=2,
+    ),
+    timestamps_as_iso8601=True,
+    stream_per_topic=False,
+    autotrim_mins=30,
+)
+```
+
+**Recommendation:** Use Redis Streams (NautilusTrader native), CustomData for regime, Actor for consuming.
+
+### 3. QuestDB Schema Design — VERIFIED
+
+**Finding:** For macro data (daily/weekly updates), use **MONTH partitioning** with SYMBOL columns.
+
+**Optimal schema for liquidity data:**
+```sql
+CREATE TABLE fed_balance_sheet (
+    timestamp TIMESTAMP,
+    series_id SYMBOL CAPACITY 100,   -- WALCL, WLRRAL, WDTGAL, etc.
+    source SYMBOL CAPACITY 10,        -- fred, ecb_sdw, etc.
+    value DOUBLE,
+    unit SYMBOL CAPACITY 20           -- millions_usd, percent, etc.
+) TIMESTAMP(timestamp)
+  PARTITION BY MONTH
+  WAL
+  DEDUP UPSERT KEYS(timestamp, series_id);
+```
+
+**Why MONTH not DAY:**
+- Macro data updates daily/weekly (low velocity)
+- DAY partitioning creates too many small partitions
+- MONTH balances query efficiency with partition size
+- Historical queries typically span months/years
+
+**SYMBOL columns for:**
+- `series_id` — dictionary-encoded, fast filtering
+- `source` — enables source-level queries
+- `unit` — metadata without bloating storage
+
+**Deduplication:**
+- `DEDUP UPSERT KEYS(timestamp, series_id)` ensures exactly-once semantics
+- Re-fetching same data replaces old values
+- Requires WAL (Write-Ahead Log) table
+
+**Calculated metrics table:**
+```sql
+CREATE TABLE liquidity_indexes (
+    timestamp TIMESTAMP,
+    index_name SYMBOL CAPACITY 20,    -- net_liquidity, global_liquidity, stealth_qe
+    value DOUBLE,
+    regime SYMBOL CAPACITY 10         -- expansionary, neutral, contractionary
+) TIMESTAMP(timestamp)
+  PARTITION BY MONTH
+  WAL
+  DEDUP UPSERT KEYS(timestamp, index_name);
+```
+
+</deep_dive_verification>
+
 <open_questions>
 ## Open Questions
 
-1. **OpenBB Async Support**
-   - What we know: OpenBB provides sync API via `obb.economy.fred_series()`
-   - What's unclear: Whether OpenBB supports async natively or requires wrapping in `asyncio.to_thread()`
-   - Recommendation: Test in implementation; wrap sync calls in executor if needed
+All major questions resolved in deep dive verification. Remaining minor items:
 
-2. **QuestDB Partitioning Strategy**
-   - What we know: QuestDB auto-partitions by timestamp, supports symbol columns
-   - What's unclear: Optimal partition granularity for macro data (daily/weekly updates)
-   - Recommendation: Start with DAY partitioning, benchmark and adjust
+1. **OpenBB REST API scaling**
+   - What we know: REST API available via FastAPI, async-friendly
+   - When to consider: If `asyncio.to_thread()` becomes bottleneck with many concurrent fetches
+   - Recommendation: Start with to_thread, profile, migrate to REST API if needed
 
-3. **Redis PubSub vs Streams for NautilusTrader**
-   - What we know: Both patterns work; PubSub is simpler, Streams have persistence
-   - What's unclear: What NautilusTrader expects/prefers for macro data integration
-   - Recommendation: Start with PubSub (simpler), migrate to Streams if persistence needed
+2. **QuestDB Array Support for Yield Curves**
+   - What we know: QuestDB 9.0 added array support
+   - When to consider: Storing full yield curve (2Y, 5Y, 10Y, 30Y) in single row
+   - Recommendation: Start with normalized table (one row per tenor), consider arrays for query simplification later
 
 </open_questions>
 
@@ -449,15 +585,22 @@ settings = Settings()
 - [QuestDB Python Client Docs](https://questdb.com/docs/clients/ingest-python/) - ILP ingestion patterns
 - [Tenacity Documentation](https://tenacity.readthedocs.io/) - Retry patterns, async support
 - [prometheus_client Documentation](https://prometheus.github.io/client_python/) - Custom collectors
+- [NautilusTrader Actors](https://nautilustrader.io/docs/nightly/concepts/actors/) - Custom actor patterns
+- [NautilusTrader MessageBus](https://nautilustrader.io/docs/nightly/concepts/message_bus/) - Redis Streams integration
+- [NautilusTrader Adapters](https://nautilustrader.io/docs/latest/developer_guide/adapters/) - Data client architecture
+- [QuestDB CREATE TABLE](https://questdb.com/docs/reference/sql/create-table/) - Schema design, partitioning, dedup
+- [QuestDB Designated Timestamp](https://questdb.com/docs/concept/designated-timestamp/) - Timestamp column requirements
+- [QuestDB Deduplication](https://questdb.com/docs/concept/deduplication/) - UPSERT KEYS patterns
 
 ### Secondary (MEDIUM confidence)
 - [purgatory-circuitbreaker PyPI](https://pypi.org/project/purgatory-circuitbreaker/) - Circuit breaker patterns
 - [pydantic-settings-sops GitHub](https://github.com/pavelzw/pydantic-settings-sops) - SOPS integration
 - [redis-py GitHub](https://github.com/redis/redis-py) - Async pub/sub patterns
+- [Python asyncio.to_thread](https://docs.python.org/3/library/asyncio-task.html) - Wrapping sync calls
 
-### Tertiary (LOW confidence - needs validation)
-- FedFred as alternative to fredapi — need to validate API completeness
-- QuestDB array support in 9.0 — need to confirm availability and client support
+### Tertiary (LOW confidence - validated in deep dive)
+- ~~FedFred as alternative to fredapi~~ — Not needed, OpenBB covers use case
+- QuestDB array support in 9.0 — Confirmed available, deferred for Phase 1
 
 </sources>
 
@@ -469,14 +612,17 @@ settings = Settings()
 - Ecosystem: tenacity, purgatory, redis-py, prometheus_client, pydantic-settings
 - Patterns: Collector architecture, retry/circuit breaker, ILP ingestion
 - Pitfalls: Rate limiting, timestamp handling, reconnection, multiprocess
+- Deep dive: OpenBB async, NautilusTrader integration, QuestDB schema design
 
 **Confidence breakdown:**
 - Standard stack: HIGH - all libraries verified in official docs
 - Architecture: HIGH - patterns from official examples and docs
 - Pitfalls: HIGH - documented in GitHub issues and official docs
 - Code examples: HIGH - from official repos and documentation
+- Deep dive verification: HIGH - all open questions resolved with authoritative sources
 
 **Research date:** 2026-01-21
+**Deep dive date:** 2026-01-21
 **Valid until:** 2026-02-21 (30 days - ecosystem is stable)
 
 </metadata>
