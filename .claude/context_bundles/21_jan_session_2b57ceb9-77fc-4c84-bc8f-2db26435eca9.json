@@ -204,7 +204,13 @@
       "timestamp": "2026-01-21T22:52:55.456787",
       "command": "uv run mypy src/ 2>&1 | head -50",
       "description": "Run mypy type checker"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T22:59:00.951696",
+      "command": "uv run pytest tests/unit/ -q 2>&1 | tail -5",
+      "description": "Quick test verification"
     }
   ],
-  "last_updated": "2026-01-21T22:52:55.456814"
+  "last_updated": "2026-01-21T22:59:00.951717"
 }
