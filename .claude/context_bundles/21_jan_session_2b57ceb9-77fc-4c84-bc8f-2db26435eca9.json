@@ -705,7 +705,132 @@
       "timestamp": "2026-01-21T21:17:34.567489",
       "file_path": "/media/sam/1TB/openbb_liquidity/.planning/phases/01-foundation-core-data/01-UAT.md",
       "content_length": 1834
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:19:46.915931",
+      "command": "uv sync 2>&1 | tail -3",
+      "description": "Test 1: uv sync"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:19:59.878955",
+      "command": "uv run python -c \"from liquidity import __version__; print(__version__)\" 2>&1",
+      "description": "Test 1: version check"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:20:00.611237",
+      "command": "uv run python -c \"from liquidity.config import settings; print(settings.questdb_host)\" 2>&1",
+      "description": "Test 2: config module"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:20:01.673297",
+      "command": "uv run python -c \"from liquidity.collectors.base import BaseCollector; print('OK')\" 2>&1",
+      "description": "Test 3: base collector"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:20:26.459089",
+      "command": "docker compose ps --format \"table {{.Name}}\\t{{.Status}}\" 2>&1 | head -5",
+      "description": "Test 4: Docker services status"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:20:27.326573",
+      "command": "uv run python -c \"from liquidity.storage.questdb import QuestDBStorage; print('OK')\" 2>&1",
+      "description": "Test 5: QuestDB storage"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:20:28.899114",
+      "command": "uv run python -c \"from liquidity.collectors.fred import FredCollector, SERIES_MAP; print(len(SERIES_MAP))\" 2>&1",
+      "description": "Test 6: FRED collector"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:20:45.172041",
+      "command": "uv run python -c \"from liquidity.collectors.yahoo import YahooCollector; print('OK')\" 2>&1",
+      "description": "Test 7: Yahoo collector"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:21:01.216333",
+      "command": "uv run pytest tests/unit/ -v --tb=short 2>&1 | tail -5",
+      "description": "Test 8: Unit tests"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:21:11.970922",
+      "command": "docker compose up -d 2>&1",
+      "description": "Start Docker services"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:21:12.538443",
+      "command": "uv run pytest tests/unit/ -v --tb=short 2>&1 | tail -10",
+      "description": "Test 8: Unit tests with correct path"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:21:20.481493",
+      "command": "uv run python -m pytest tests/unit/ -v --tb=short 2>&1 | tail -10",
+      "description": "Run pytest through uv python"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:21:24.477744",
+      "command": "uv pip list | grep pytest",
+      "description": "Check pytest installation"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:21:28.718398",
+      "command": "uv add pytest pytest-asyncio pytest-cov --dev 2>&1 | tail -5",
+      "description": "Add pytest dev dependencies"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:21:34.689160",
+      "command": "uv run pytest tests/unit/ -v --tb=short 2>&1 | tail -15",
+      "description": "Run unit tests"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-21T21:22:01.856332",
+      "file_path": "/media/sam/1TB/openbb_liquidity/docker-compose.yml"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:22:07.921298",
+      "command": "docker ps --format \"table {{.Names}}\\t{{.Status}}\" | grep -E \"(questdb|redis)\" | head -5",
+      "description": "Check existing QuestDB/Redis containers"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:22:13.591948",
+      "command": "curl -s http://localhost:9000 | head -5",
+      "description": "Verify QuestDB web console"
+    },
+    {
+      "operation": "write",
+      "timestamp": "2026-01-21T21:24:28.047121",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/phases/01-foundation-core-data/01-UAT.md",
+      "content_length": 1756
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:24:41.626840",
+      "command": "git add .planning/phases/01-foundation-core-data/01-UAT.md pyproject.toml uv.lock && git commit -m \"test(01): complete UAT - 8 passed, 0 issues\" 2>&1",
+      "description": "Commit UAT results"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-21T21:24:46.287160",
+      "command": "git push origin main 2>&1 | tail -5",
+      "description": "Push UAT results"
     }
   ],
-  "last_updated": "2026-01-21T21:17:34.567523"
+  "last_updated": "2026-01-21T21:24:46.287180"
 }
