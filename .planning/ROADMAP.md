@@ -1,228 +1,180 @@
-# ROADMAP: Global Liquidity Monitor
+# Roadmap: Global Liquidity Monitor (OpenBB)
 
-> **Version**: 1.0
-> **Last Updated**: 2026-01-21
-> **Total Phases**: 19 (grouped into 5 milestones)
+## Overview
 
----
+Build a FAANG-grade global liquidity monitoring system from the ground up. Start with Fed data (Hayes formula core), expand to global CBs, add market indicators, implement liquidity calculations and regime classification, then deliver via API and dashboards with alerting.
 
-## Milestone Overview
+## Domain Expertise
 
-| Milestone | Phases | Description | Priority |
-|-----------|--------|-------------|----------|
-| **M1: MVP Foundation** | 1-4 | Core collectors, overnight, bonds | P0 - Critical |
-| **M2: Scoring & Integration** | 5-7 | Stealth QE, API, NautilusTrader | P0 - Critical |
-| **M3: Global Coverage** | 8-12 | CB Tier 1b/2, Money Managers, Validation | P1 - High |
-| **M4: Quant Infrastructure** | 13-16 | Network, Early Warning, Stress Test | P2 - Medium |
-| **M5: ML & Trading** | 17-19 | ML Regime, Edge Detection, Dashboard | P2 - Medium |
+None
 
----
+## Phases
 
-## M1: MVP Foundation
+**Phase Numbering:**
+- Integer phases (1, 2, 3): Planned milestone work
+- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-> **Goal**: Working system with Fed/ECB/BoJ data, overnight rates, bonds/volatility
-> **Exit Criteria**: Net Liquidity Index matches Apps Script ±5%
+Decimal phases appear between their surrounding integers in numeric order.
 
-### Phase 1: Foundation & Template Setup
-- [ ] Setup repo with Claude + Backstage template
-- [ ] `.claude/CLAUDE.md`, `.specify/constitution.md`, `catalog-info.yaml`
-- [ ] Implement FRED collector base (Fed + ECB + BoJ)
-- [ ] Implement Net Liquidity calculation (Hayes formula)
-- [ ] Basic CLI tool for testing
-- [ ] Unit tests for collectors
+- [ ] **Phase 1: Foundation & Core Data** - Project setup, FRED API, Fed balance sheet collectors
+- [ ] **Phase 2: Global CB Collectors** - ECB, BoJ, PBoC, BoE, SNB, BoC balance sheet collectors
+- [ ] **Phase 3: Overnight Rates & FX** - SOFR, €STR, SONIA, CORRA + FX pair collectors
+- [ ] **Phase 4: Market Indicators** - Bonds, volatility (MOVE, VIX), commodities
+- [ ] **Phase 5: Capital Flows & Stress** - TIC data, ETF flows, stress indicators
+- [ ] **Phase 6: Credit & BIS Data** - Credit markets, BIS Eurodollar/international banking
+- [ ] **Phase 7: Liquidity Calculations** - Net Liquidity, Global Liquidity, Stealth QE Score
+- [ ] **Phase 8: Analysis & Correlations** - Regime classifier, correlation engine
+- [ ] **Phase 9: Calendar & API** - Calendar effects, FastAPI REST server
+- [ ] **Phase 10: Visualization & Alerting** - Plotly dashboards, Discord alerts, QA validation
 
-### Phase 2: Global Aggregation + BIS
-- [ ] ECB SDW API integration
-- [ ] BIS SDMX API integration (GLI, CBTA)
-- [ ] PBoC scraper (fallback sources)
-- [ ] FX conversion module
-- [ ] Global Liquidity Index calculation
-- [ ] Integration tests
+## Phase Details
 
-### Phase 3: Overnight & Stress Indicators
-- [ ] SOFR/€STR/SONIA collectors
-- [ ] Swap lines monitoring (SWPT series)
-- [ ] RMP tracking (NY Fed schedule)
-- [ ] Cross-currency basis (research/proxy)
-- [ ] Repo market stress indicators
-- [ ] `overnight/` module unit tests
+### Phase 1: Foundation & Core Data
+**Goal**: Project scaffolding and Fed balance sheet data collection (Hayes formula inputs)
+**Depends on**: Nothing (first phase)
+**Requirements**: DATA-01, DATA-12, DATA-13, DATA-14, DATA-15
+**Research**: Unlikely (FRED API well-documented, standard Python patterns)
+**Plans**: TBD
 
-### Phase 4: Bonds & Volatility
-- [ ] Treasury yields (yield curve)
-- [ ] MOVE index (Yahoo Finance)
-- [ ] VIX family (VIX, VIX3M, VIX9D)
-- [ ] Credit spreads (IG, HY, EM)
-- [ ] `bonds/` module unit tests
+Plans:
+- [ ] 01-01: Project scaffolding (uv, OpenBB, QuestDB, structure)
+- [ ] 01-02: FRED API collector base + Fed balance sheet (WALCL, TGA, RRP)
+- [ ] 01-03: MOVE, VIX, yield curve, credit spreads collectors
 
----
+### Phase 2: Global CB Collectors
+**Goal**: Complete Tier 1 central bank coverage (>85% global flows)
+**Depends on**: Phase 1
+**Requirements**: DATA-02, DATA-03, DATA-04, DATA-05, DATA-06, DATA-07
+**Research**: Likely (ECB SDW API, BoJ API, PBoC scraping patterns)
+**Research topics**: ECB SDW API authentication, BoJ data access, PBoC data scraping strategy
+**Plans**: TBD
 
-## M2: Scoring & Integration
+Plans:
+- [ ] 02-01: ECB SDW API collector
+- [ ] 02-02: BoJ collector (via FRED or direct API)
+- [ ] 02-03: PBoC collector (monthly lag, scraping)
+- [ ] 02-04: BoE, SNB, BoC collectors
 
-> **Goal**: Stealth QE Score, Regime Classification, API, NautilusTrader integration
-> **Exit Criteria**: E2E validation passes, API serves regime data
+### Phase 3: Overnight Rates & FX
+**Goal**: Overnight rate monitoring and FX collectors for carry trade signals
+**Depends on**: Phase 1
+**Requirements**: DATA-08, DATA-09, DATA-10, DATA-11, FX-01, FX-02, FX-03, FX-04, FX-05
+**Research**: Likely (NY Fed Data Hub API, BoC/BoE rate APIs)
+**Research topics**: NY Fed Data Hub SOFR endpoint, ECB €STR API, BoE SONIA API, BoC CORRA API
+**Plans**: TBD
 
-### Phase 5: Score & Regime
-- [ ] Port Stealth QE Score from Apps Script
-- [ ] Implement Regime Classifier (Expansionary/Neutral/Contractionary)
-- [ ] Historical backtest validation
-- [ ] Compare with Apps Script output
-- [ ] E2E tests vs Apps Script
+Plans:
+- [ ] 03-01: SOFR collector (NY Fed Data Hub)
+- [ ] 03-02: €STR, SONIA, CORRA collectors
+- [ ] 03-03: FX collectors (DXY, major pairs, IMF COFER)
 
-### Phase 6: API & Alerts
-- [ ] FastAPI REST server
-- [ ] Discord webhook integration
-- [ ] Real-time regime alerts
-- [ ] Plotly dashboards (HTML export)
+### Phase 4: Market Indicators
+**Goal**: Commodities collectors for economic signals
+**Depends on**: Phase 1
+**Requirements**: CMDTY-01, CMDTY-02, CMDTY-03, CMDTY-04, CMDTY-05
+**Research**: Unlikely (Yahoo Finance, standard commodity APIs)
+**Plans**: TBD
 
-### Phase 7: Integration & Deprecation
-- [ ] NautilusTrader macro filter
-- [ ] QuestDB ingestion pipeline
-- [ ] MCP server for Claude (optional)
+Plans:
+- [ ] 04-01: Gold & Silver collectors (spot, ETF flows)
+- [ ] 04-02: Copper, Oil collectors
 
----
+### Phase 5: Capital Flows & Stress
+**Goal**: Capital flow tracking and funding market stress indicators
+**Depends on**: Phase 2, Phase 3
+**Requirements**: FLOW-01, FLOW-02, FLOW-03, FLOW-04, STRESS-01, STRESS-02, STRESS-03, STRESS-04
+**Research**: Likely (TIC data format, cross-currency basis sources)
+**Research topics**: US Treasury TIC API, Fed custody data, cross-currency basis data sources
+**Plans**: TBD
 
-## M3: Global Coverage
+Plans:
+- [ ] 05-01: TIC data collector (Treasury International Capital)
+- [ ] 05-02: ETF flows collector (SPY, TLT, GLD, HYG)
+- [ ] 05-03: Fed custody holdings collector
+- [ ] 05-04: Stress indicators (SOFR-OIS spread, cross-currency basis, FRA-OIS, repo stress)
 
-> **Goal**: Expand to >85% global coverage with validation layer
-> **Exit Criteria**: All Tier 1+2 CB collectors working, double-entry validation passing
+### Phase 6: Credit & BIS Data
+**Goal**: Credit market monitoring and BIS Eurodollar system tracking
+**Depends on**: Phase 1
+**Requirements**: CREDIT-01, CREDIT-02, CREDIT-03, CREDIT-04, FLOW-05, FLOW-06
+**Research**: Likely (BIS SDMX API, SLOOS data access)
+**Research topics**: BIS SDMX API endpoints, International Banking Statistics, SLOOS historical data
+**Plans**: TBD
 
-### Phase 8: Additional CB Collectors (Tier 1b)
-- [ ] Bank of Canada (BoC) Valet API collector
-- [ ] CORRA overnight rate integration
-- [ ] Bank of England (BoE) API collector
-- [ ] Swiss National Bank (SNB) API collector
-- [ ] Unit tests for all Tier 1 CB collectors
+Plans:
+- [ ] 06-01: Credit market collectors (issuance, HY OAS, CP rates)
+- [ ] 06-02: SLOOS collector
+- [ ] 06-03: BIS collectors (International Banking Statistics, Locational Banking)
 
-### Phase 9: CB Tier 2
-- [ ] Reserve Bank of India (RBI) DBIE collector
-- [ ] Reserve Bank of Australia (RBA) collector
-- [ ] Bank of Korea (BoK) ECOS API collector
-- [ ] Central Bank of Brazil (BCB) SGS collector
-- [ ] Unit tests for Tier 2 collectors
-- [ ] FX conversion for all currencies (INR, AUD, KRW, BRL)
+### Phase 7: Liquidity Calculations
+**Goal**: Core liquidity index calculations and Stealth QE score
+**Depends on**: Phase 2, Phase 5
+**Requirements**: CALC-01, CALC-02, CALC-03, CALC-04, ANLYS-02
+**Research**: Unlikely (port from Apps Script v3.4.1, internal calculation logic)
+**Plans**: TBD
 
-### Phase 10: Money Managers & Institutional Flows
-- [ ] Fed Flow of Funds (Z.1) collector
-- [ ] CFTC Commitments of Traders collector
-- [ ] ICI fund flows collector
-- [ ] SEC 13F parser (top institutions)
-- [ ] ETF flows via OpenBB
-- [ ] `flows/` module unit tests
+Plans:
+- [ ] 07-01: Net Liquidity Index (Hayes formula: WALCL - TGA - RRP)
+- [ ] 07-02: Global Liquidity Index (Fed + ECB + BoJ + PBoC in USD)
+- [ ] 07-03: Stealth QE Score (port from Apps Script)
+- [ ] 07-04: Double-entry validation and >85% coverage verification
 
-### Phase 11: Double-Entry Validation
-- [ ] Implement DoubleEntryValidator class
-- [ ] CB balance sheet validation checks
-- [ ] Swap lines cross-validation
-- [ ] Net liquidity decomposition check
-- [ ] Cross-source consistency checks
-- [ ] Daily reconciliation job (cron)
-- [ ] Discord alerts for validation failures
-- [ ] Validation dashboard panel
+### Phase 8: Analysis & Correlations
+**Goal**: Regime classification and cross-asset correlation engine
+**Depends on**: Phase 7
+**Requirements**: ANLYS-01, CORR-01, CORR-02, CORR-03, CORR-04, CORR-05
+**Research**: Unlikely (internal analysis patterns)
+**Plans**: TBD
 
-### Phase 12: Coverage Optimization
-- [ ] Verify >85% coverage target achieved
-- [ ] Implement missing gap mitigations (BIS FSB, SWFs)
-- [ ] Data freshness monitoring
-- [ ] Automated data quality scoring
-- [ ] Documentation and runbooks
-- [ ] Deprecate Apps Script (migration script)
-- [ ] Full E2E validation
+Plans:
+- [ ] 08-01: Regime classifier (Expansionary/Neutral/Contractionary)
+- [ ] 08-02: Correlation engine (BTC, SPX, Gold vs liquidity)
+- [ ] 08-03: Correlation alerts on regime shift
 
----
+### Phase 9: Calendar & API
+**Goal**: Calendar effects tracking and FastAPI REST server
+**Depends on**: Phase 7, Phase 8
+**Requirements**: CAL-01, CAL-02, CAL-03, CAL-04, CAL-05, API-01, API-02, API-03, API-04, API-05, API-06, API-07, API-08, API-09
+**Research**: Unlikely (FastAPI standard patterns)
+**Plans**: TBD
 
-## M4: Quant Infrastructure
+Plans:
+- [ ] 09-01: Calendar effects (auctions, month-end, tax dates, Fed meetings)
+- [ ] 09-02: FastAPI server setup and core endpoints
+- [ ] 09-03: Additional API endpoints (FX, stress, correlations, calendar)
+- [ ] 09-04: NautilusTrader macro filter integration
 
-> **Goal**: Network analysis, early warning, stress testing
-> **Exit Criteria**: EWS alerts validated against 2020-03, 2022-09 events
+### Phase 10: Visualization & Alerting
+**Goal**: Plotly dashboards, Discord alerting, and quality validation
+**Depends on**: Phase 9
+**Requirements**: VIZ-01, VIZ-02, VIZ-03, VIZ-04, VIZ-05, VIZ-06, VIZ-07, VIZ-08, ALERT-01, ALERT-02, ALERT-03, ALERT-04, QA-01, QA-02, QA-03, QA-04, QA-05, QA-06, QA-07, QA-08, QA-09, QA-10
+**Research**: Unlikely (Plotly Dash standard patterns, Discord webhook standard)
+**Plans**: TBD
 
-### Phase 13: Network Analysis Module
-- [ ] Implement EntityRegistry with CB, bank, money manager entities
-- [ ] Define relationship types (LENDER_OF_LAST_RESORT, SWAP_LINE, etc.)
-- [ ] Build DependencyGraph class with NetworkX integration
-- [ ] Implement centrality metrics (PageRank, betweenness, closeness)
-- [ ] Build ContagionSimulator with cascade modeling
-- [ ] Network visualization export (Plotly network graph)
-- [ ] Unit tests for graph algorithms
+Plans:
+- [ ] 10-01: Core Plotly dashboard (Net/Global Liquidity, regime)
+- [ ] 10-02: Extended dashboard panels (FX, commodities, stress, flows)
+- [ ] 10-03: Discord alerting (regime changes, stress alerts, DXY moves)
+- [ ] 10-04: Quality & validation system (freshness, anomalies, cross-validation)
+- [ ] 10-05: HTML export and data quality indicators
 
-### Phase 14: Early Warning System
-- [ ] Implement EarlyWarningSystem class
-- [ ] Define 4-tier alert levels (GREEN/YELLOW/ORANGE/RED)
-- [ ] Configure lead indicators (SOFR-EFFR spread, RRP velocity, etc.)
-- [ ] Historical threshold calibration (percentile-based)
-- [ ] Implement alerting pipeline (Discord + Email)
-- [ ] Build alert dashboard panel
-- [ ] Backtesting: validate alerts for 2020-03, 2022-09 events
+## Progress
 
-### Phase 15: Lead/Lag Analysis
-- [ ] Implement LeadLagAnalyzer class
-- [ ] Granger causality test implementation
-- [ ] Cross-correlation analysis with variable lags (1-90 days)
-- [ ] Rolling correlation matrix calculation
-- [ ] Lead indicator composite scoring
-- [ ] Historical pattern matching
-- [ ] CLI command: `analyze lead-lag --indicator SOFR`
+**Execution Order:**
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10
 
-### Phase 16: Stress Testing & Scenarios
-- [ ] Implement StressTestEngine class
-- [ ] Define 6 predefined scenarios (Lehman, COVID, China Deval, etc.)
-- [ ] Monte Carlo simulation (10,000 runs)
-- [ ] Shock propagation through dependency network
-- [ ] Portfolio impact estimation
-- [ ] Confidence interval calculation (5th/50th/95th percentiles)
-- [ ] Stress test report generation (PDF/HTML)
-
----
-
-## M5: ML & Trading
-
-> **Goal**: ML regime detection, edge detection, real-time trading dashboard
-> **Exit Criteria**: ML ensemble accuracy >70%, dashboard live
-
-### Phase 17: ML Regime Detection
-- [ ] Implement MLRegimeDetector ensemble class
-- [ ] Hidden Markov Model (HMM) implementation
-- [ ] Gaussian Mixture Model (GMM) implementation
-- [ ] LSTM neural network for sequence modeling
-- [ ] Random Forest for regime classification
-- [ ] Ensemble voting mechanism (weighted average)
-- [ ] Feature engineering pipeline (Z-scores, momentum, volatility)
-- [ ] Model training/retraining pipeline
-- [ ] Backtesting with walk-forward validation
-- [ ] Regime transition probability matrix
-
-### Phase 18: Edge Detection Framework
-- [ ] Implement EdgeDetector class
-- [ ] Pattern recognition: Fed Pivot, Liquidity Squeeze, Stealth QE, etc.
-- [ ] Confidence scoring for each edge
-- [ ] Historical success rate tracking
-- [ ] Trade suggestion generation (long/short/neutral)
-- [ ] Position sizing recommendations (Kelly criterion)
-- [ ] Risk/reward calculation
-- [ ] CLI command: `detect edges --lookback 30d`
-- [ ] Backtesting module for edge performance
-
-### Phase 19: Real-Time Trading Dashboard
-- [ ] Set up Plotly Dash application structure
-- [ ] FastAPI WebSocket backend for live updates
-- [ ] Dashboard tab: Executive Summary (key metrics cards)
-- [ ] Dashboard tab: Network Visualization (interactive graph)
-- [ ] Dashboard tab: Early Warning (alert timeline)
-- [ ] Dashboard tab: Regime Analysis (ML outputs + transitions)
-- [ ] Dashboard tab: Trading Signals (edges + recommendations)
-- [ ] Dashboard tab: Stress Test Results (scenario comparison)
-- [ ] Mobile responsive design
-- [ ] Docker compose for deployment
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 1. Foundation & Core Data | 0/3 | Not started | - |
+| 2. Global CB Collectors | 0/4 | Not started | - |
+| 3. Overnight Rates & FX | 0/3 | Not started | - |
+| 4. Market Indicators | 0/2 | Not started | - |
+| 5. Capital Flows & Stress | 0/4 | Not started | - |
+| 6. Credit & BIS Data | 0/3 | Not started | - |
+| 7. Liquidity Calculations | 0/4 | Not started | - |
+| 8. Analysis & Correlations | 0/3 | Not started | - |
+| 9. Calendar & API | 0/4 | Not started | - |
+| 10. Visualization & Alerting | 0/5 | Not started | - |
 
 ---
-
-## Progress Tracking
-
-| Milestone | Phases | Status | Progress |
-|-----------|--------|--------|----------|
-| M1 | 1-4 | Not Started | 0/4 |
-| M2 | 5-7 | Not Started | 0/3 |
-| M3 | 8-12 | Not Started | 0/5 |
-| M4 | 13-16 | Not Started | 0/4 |
-| M5 | 17-19 | Not Started | 0/3 |
-
-**Total**: 0/19 phases complete
+*Created: 2026-01-21*

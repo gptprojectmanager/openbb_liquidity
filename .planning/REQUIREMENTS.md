@@ -169,98 +169,98 @@ Which phases cover which requirements. Updated by create-roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | - | Pending |
-| DATA-02 | - | Pending |
-| DATA-03 | - | Pending |
-| DATA-04 | - | Pending |
-| DATA-05 | - | Pending |
-| DATA-06 | - | Pending |
-| DATA-07 | - | Pending |
-| DATA-08 | - | Pending |
-| DATA-09 | - | Pending |
-| DATA-10 | - | Pending |
-| DATA-11 | - | Pending |
-| DATA-12 | - | Pending |
-| DATA-13 | - | Pending |
-| DATA-14 | - | Pending |
-| DATA-15 | - | Pending |
-| FX-01 | - | Pending |
-| FX-02 | - | Pending |
-| FX-03 | - | Pending |
-| FX-04 | - | Pending |
-| FX-05 | - | Pending |
-| CMDTY-01 | - | Pending |
-| CMDTY-02 | - | Pending |
-| CMDTY-03 | - | Pending |
-| CMDTY-04 | - | Pending |
-| CMDTY-05 | - | Pending |
-| FLOW-01 | - | Pending |
-| FLOW-02 | - | Pending |
-| FLOW-03 | - | Pending |
-| FLOW-04 | - | Pending |
-| FLOW-05 | - | Pending |
-| FLOW-06 | - | Pending |
-| STRESS-01 | - | Pending |
-| STRESS-02 | - | Pending |
-| STRESS-03 | - | Pending |
-| STRESS-04 | - | Pending |
-| CREDIT-01 | - | Pending |
-| CREDIT-02 | - | Pending |
-| CREDIT-03 | - | Pending |
-| CREDIT-04 | - | Pending |
-| CALC-01 | - | Pending |
-| CALC-02 | - | Pending |
-| CALC-03 | - | Pending |
-| CALC-04 | - | Pending |
-| ANLYS-01 | - | Pending |
-| ANLYS-02 | - | Pending |
-| CORR-01 | - | Pending |
-| CORR-02 | - | Pending |
-| CORR-03 | - | Pending |
-| CORR-04 | - | Pending |
-| CORR-05 | - | Pending |
-| CAL-01 | - | Pending |
-| CAL-02 | - | Pending |
-| CAL-03 | - | Pending |
-| CAL-04 | - | Pending |
-| CAL-05 | - | Pending |
-| API-01 | - | Pending |
-| API-02 | - | Pending |
-| API-03 | - | Pending |
-| API-04 | - | Pending |
-| API-05 | - | Pending |
-| API-06 | - | Pending |
-| API-07 | - | Pending |
-| API-08 | - | Pending |
-| API-09 | - | Pending |
-| VIZ-01 | - | Pending |
-| VIZ-02 | - | Pending |
-| VIZ-03 | - | Pending |
-| VIZ-04 | - | Pending |
-| VIZ-05 | - | Pending |
-| VIZ-06 | - | Pending |
-| VIZ-07 | - | Pending |
-| VIZ-08 | - | Pending |
-| ALERT-01 | - | Pending |
-| ALERT-02 | - | Pending |
-| ALERT-03 | - | Pending |
-| ALERT-04 | - | Pending |
-| QA-01 | - | Pending |
-| QA-02 | - | Pending |
-| QA-03 | - | Pending |
-| QA-04 | - | Pending |
-| QA-05 | - | Pending |
-| QA-06 | - | Pending |
-| QA-07 | - | Pending |
-| QA-08 | - | Pending |
-| QA-09 | - | Pending |
-| QA-10 | - | Pending |
+| DATA-01 | Phase 1 | Pending |
+| DATA-02 | Phase 2 | Pending |
+| DATA-03 | Phase 2 | Pending |
+| DATA-04 | Phase 2 | Pending |
+| DATA-05 | Phase 2 | Pending |
+| DATA-06 | Phase 2 | Pending |
+| DATA-07 | Phase 2 | Pending |
+| DATA-08 | Phase 3 | Pending |
+| DATA-09 | Phase 3 | Pending |
+| DATA-10 | Phase 3 | Pending |
+| DATA-11 | Phase 3 | Pending |
+| DATA-12 | Phase 1 | Pending |
+| DATA-13 | Phase 1 | Pending |
+| DATA-14 | Phase 1 | Pending |
+| DATA-15 | Phase 1 | Pending |
+| FX-01 | Phase 3 | Pending |
+| FX-02 | Phase 3 | Pending |
+| FX-03 | Phase 3 | Pending |
+| FX-04 | Phase 3 | Pending |
+| FX-05 | Phase 3 | Pending |
+| CMDTY-01 | Phase 4 | Pending |
+| CMDTY-02 | Phase 4 | Pending |
+| CMDTY-03 | Phase 4 | Pending |
+| CMDTY-04 | Phase 4 | Pending |
+| CMDTY-05 | Phase 4 | Pending |
+| FLOW-01 | Phase 5 | Pending |
+| FLOW-02 | Phase 5 | Pending |
+| FLOW-03 | Phase 5 | Pending |
+| FLOW-04 | Phase 5 | Pending |
+| FLOW-05 | Phase 6 | Pending |
+| FLOW-06 | Phase 6 | Pending |
+| STRESS-01 | Phase 5 | Pending |
+| STRESS-02 | Phase 5 | Pending |
+| STRESS-03 | Phase 5 | Pending |
+| STRESS-04 | Phase 5 | Pending |
+| CREDIT-01 | Phase 6 | Pending |
+| CREDIT-02 | Phase 6 | Pending |
+| CREDIT-03 | Phase 6 | Pending |
+| CREDIT-04 | Phase 6 | Pending |
+| CALC-01 | Phase 7 | Pending |
+| CALC-02 | Phase 7 | Pending |
+| CALC-03 | Phase 7 | Pending |
+| CALC-04 | Phase 7 | Pending |
+| ANLYS-01 | Phase 8 | Pending |
+| ANLYS-02 | Phase 7 | Pending |
+| CORR-01 | Phase 8 | Pending |
+| CORR-02 | Phase 8 | Pending |
+| CORR-03 | Phase 8 | Pending |
+| CORR-04 | Phase 8 | Pending |
+| CORR-05 | Phase 8 | Pending |
+| CAL-01 | Phase 9 | Pending |
+| CAL-02 | Phase 9 | Pending |
+| CAL-03 | Phase 9 | Pending |
+| CAL-04 | Phase 9 | Pending |
+| CAL-05 | Phase 9 | Pending |
+| API-01 | Phase 9 | Pending |
+| API-02 | Phase 9 | Pending |
+| API-03 | Phase 9 | Pending |
+| API-04 | Phase 9 | Pending |
+| API-05 | Phase 9 | Pending |
+| API-06 | Phase 9 | Pending |
+| API-07 | Phase 9 | Pending |
+| API-08 | Phase 9 | Pending |
+| API-09 | Phase 9 | Pending |
+| VIZ-01 | Phase 10 | Pending |
+| VIZ-02 | Phase 10 | Pending |
+| VIZ-03 | Phase 10 | Pending |
+| VIZ-04 | Phase 10 | Pending |
+| VIZ-05 | Phase 10 | Pending |
+| VIZ-06 | Phase 10 | Pending |
+| VIZ-07 | Phase 10 | Pending |
+| VIZ-08 | Phase 10 | Pending |
+| ALERT-01 | Phase 10 | Pending |
+| ALERT-02 | Phase 10 | Pending |
+| ALERT-03 | Phase 10 | Pending |
+| ALERT-04 | Phase 10 | Pending |
+| QA-01 | Phase 10 | Pending |
+| QA-02 | Phase 10 | Pending |
+| QA-03 | Phase 10 | Pending |
+| QA-04 | Phase 10 | Pending |
+| QA-05 | Phase 10 | Pending |
+| QA-06 | Phase 10 | Pending |
+| QA-07 | Phase 10 | Pending |
+| QA-08 | Phase 10 | Pending |
+| QA-09 | Phase 10 | Pending |
+| QA-10 | Phase 10 | Pending |
 
 **Coverage:**
 - v1 requirements: 86 total
-- Mapped to phases: 0 (pending create-roadmap)
-- Unmapped: 86 ⚠️
+- Mapped to phases: 86
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-01-21*
-*Last updated: 2026-01-21 after adding BIS Eurodollar data*
+*Last updated: 2026-01-21 after roadmap creation*
