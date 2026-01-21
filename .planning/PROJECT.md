@@ -1,83 +1,84 @@
-# PROJECT: Global Liquidity Monitor (OpenBB)
+# Global Liquidity Monitor (OpenBB)
 
-> **Status**: Planning
-> **Created**: 2026-01-21
-> **Owner**: gptcompany
+## What This Is
 
-## Vision
+A FAANG-grade global liquidity monitoring system based on Arthur Hayes' framework. Tracks >85% of global monetary flows from central banks, overnight markets, and institutional investors using OpenBB as unified data platform. Integrates with NautilusTrader for macro-filtered trading strategies.
 
-Build a **FAANG-grade global liquidity monitoring system** based on Arthur Hayes' framework, using OpenBB as the unified data platform. Track >85% of global monetary flows from central banks, overnight markets, and institutional investors.
+## Core Value
 
-## Problem Statement
+**Real-time regime classification** — Know instantly whether we're in Expansionary, Neutral, or Contractionary liquidity regime to inform trading decisions.
 
-Current liquidity monitoring relies on fragmented Google Apps Script with:
+## Requirements
+
+### Validated
+
+(None yet — ship to validate)
+
+### Active
+
+- [ ] Net Liquidity Index (Hayes formula: WALCL - TGA - RRP)
+- [ ] Global Liquidity Index (Fed + ECB + BoJ + PBoC in USD)
+- [ ] Tier 1 CB collectors (Fed, ECB, BoJ, PBoC, BoE, SNB, BoC)
+- [ ] Overnight rates monitoring (SOFR, €STR, SONIA, CORRA)
+- [ ] Bonds & volatility tracking (MOVE, VIX, yield curve, credit spreads)
+- [ ] Stealth QE Score calculation (port from Apps Script)
+- [ ] Regime classifier (Expansionary/Neutral/Contractionary)
+- [ ] FastAPI REST server for data access
+- [ ] Discord webhook alerts for regime changes
+- [ ] Plotly dashboards (HTML exportable)
+- [ ] NautilusTrader macro filter integration
+- [ ] Double-entry validation for data consistency
+- [ ] >85% global monetary flow coverage
+
+### Out of Scope
+
+- Real-time intraday updates — daily/weekly sufficient for macro analysis
+- Bloomberg Terminal integration — too expensive ($24k/year), use free APIs
+- Shadow banking tracking — opaque, unreliable data
+- Crypto flow tracking — future phase, not MVP
+
+## Context
+
+**Origin:** Arthur Hayes "Frowny Cloud" article analysis showing Bitcoin correlation with dollar liquidity (0.7-0.8).
+
+**Current state:** Google Apps Script v3.4.1 exists with basic Fed/ECB/BoJ tracking but has:
 - Limited backtest capability
-- No integration with trading systems
+- No trading system integration
 - Google quota/timeout limitations
 - No real-time alerting
 
-## Solution
+**Key insight from Hayes:**
+- RMP (Reserve Management Purchases) is new Fed mechanism (Dec 2025) for liquidity injection
+- Swap lines between Fed and 5 major CBs are critical stress indicators
+- Gold flows (via Switzerland to China/India) indicate de-dollarization
 
-Python-native system with:
-- 100+ data providers via OpenBB
-- NautilusTrader integration for macro-filtered strategies
-- Real-time Discord alerts
-- Interactive Plotly dashboards
-- Double-entry validation for data quality
+**Data sources confirmed:**
+- FRED API (Fed, ECB, BoJ, rates, bonds) — free, reliable
+- ECB SDW API — free, reliable
+- BIS SDMX API — free, quarterly lag
+- Yahoo Finance (MOVE, VIX) — free
+- NY Fed Data Hub (RMP, repo) — free
+- PBoC — monthly lag, scraping required
 
-## Core Metrics
+## Constraints
 
-### Hayes Net Liquidity Formula
-```
-Net Liquidity = Fed Total Assets (WALCL) - TGA - RRP
-```
+- **Tech stack**: Python 3.11+, OpenBB SDK, uv package manager — standard for trading systems
+- **Storage**: QuestDB for time-series — already in use for NautilusTrader
+- **Visualization**: Plotly Dash — no Grafana dependency for this project
+- **Integration**: Must work with NautilusTrader nightly (v1.222.0+)
+- **Data lag**: Accept 1-day lag for Tier 1 CB, 10-15 days for PBoC
+- **Coverage target**: >85% global monetary flows
 
-### Global Liquidity Index
-```
-Global = Fed + ECB + BoJ + PBoC (USD converted)
-```
+## Key Decisions
 
-### Coverage Target
-- **Tier 1 CB**: Fed, ECB, BoJ, PBoC, BoE, SNB, BoC (~68.6% GDP)
-- **Tier 2 CB**: RBI, RBA, BoK, BCB (~9% GDP)
-- **BIS Aggregates**: GLI, CBTA (+5%)
-- **Money Managers**: Z.1, CFTC, 13F (+5%)
-- **Total**: ~87% global monetary flows
+| Decision | Rationale | Outcome |
+|----------|-----------|---------|
+| Standalone repo `/media/sam/1TB/openbb_liquidity` | Separation of concerns (macro ≠ trading) | — Pending |
+| OpenBB as data platform | 100+ providers, Python native, LLM-ready | — Pending |
+| Plotly over Grafana | Simpler deployment, HTML export, no extra service | — Pending |
+| Port Apps Script to Python | Remove Google limitations, enable backtest/integration | — Pending |
+| Double-entry validation | Ensure data consistency via accounting checks | — Pending |
+| 5 milestone structure | Balance between granularity and manageability | — Pending |
 
-## Technical Stack
-
-| Component | Technology |
-|-----------|------------|
-| Data Platform | OpenBB SDK |
-| Language | Python 3.11+ |
-| Storage | QuestDB (time-series) |
-| Visualization | Plotly Dash |
-| Alerts | Discord webhooks |
-| Integration | NautilusTrader |
-| API | FastAPI |
-
-## Repository
-
-- **Location**: `/media/sam/1TB/openbb_liquidity`
-- **GitHub**: `gptcompany/openbb_liquidity`
-- **Template**: Claude + Backstage standard
-
-## Key Stakeholders
-
-- Trading systems (NautilusTrader macro filter)
-- Research (regime analysis, backtesting)
-- Monitoring (real-time alerts)
-
-## Success Criteria
-
-1. [ ] >85% global liquidity coverage
-2. [ ] <5% deviation from Apps Script baseline
-3. [ ] <1 day data lag for Tier 1 CB
-4. [ ] Real-time regime classification
-5. [ ] NautilusTrader integration working
-
-## References
-
-- Arthur Hayes "Frowny Cloud" article
-- Original plan: `~/.claude/plans/central_banks_openBB.md`
-- OpenBB SDK docs: https://docs.openbb.co/
+---
+*Last updated: 2026-01-21 after initialization from ~/.claude/plans/central_banks_openBB.md*
