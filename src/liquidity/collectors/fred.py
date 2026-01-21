@@ -25,6 +25,32 @@ from liquidity.config import Settings, get_settings
 
 logger = logging.getLogger(__name__)
 
+
+def _find_date_column(df: pd.DataFrame) -> str:
+    """Find the date column in a DataFrame.
+
+    Args:
+        df: DataFrame to search.
+
+    Returns:
+        Name of the date column.
+
+    Raises:
+        ValueError: If no date column can be identified.
+    """
+    for col in ["date", "index", "timestamp"]:
+        if col in df.columns:
+            return col
+
+    if df.index.name:
+        return df.index.name
+
+    if len(df.columns) > 0:
+        return df.columns[0]
+
+    raise ValueError("Could not identify date column in DataFrame")
+
+
 # FRED series mapping
 # Keys are internal names, values are FRED series IDs
 SERIES_MAP: dict[str, str] = {
@@ -123,18 +149,11 @@ class FredCollector(BaseCollector[pd.DataFrame]):
         Raises:
             CollectorFetchError: If data fetch fails after retries.
         """
-        if symbols is None:
-            # Default to balance sheet series (exclude SOFR)
-            symbols = ["WALCL", "WLRRAL", "WDTGAL", "WRESBAL"]
-
-        if start_date is None:
-            start_date = datetime.now(UTC) - timedelta(days=30)
-
-        if end_date is None:
-            end_date = datetime.now(UTC)
+        symbols = symbols or ["WALCL", "WLRRAL", "WDTGAL", "WRESBAL"]
+        start_date = start_date or datetime.now(UTC) - timedelta(days=30)
+        end_date = end_date or datetime.now(UTC)
 
         async def _fetch() -> pd.DataFrame:
-            # OpenBB is synchronous, wrap in thread
             return await asyncio.to_thread(
                 self._fetch_sync, symbols, start_date, end_date
             )
@@ -172,7 +191,7 @@ class FredCollector(BaseCollector[pd.DataFrame]):
         )
 
         # Convert to DataFrame
-        df = result.to_df()
+        df = result.to_df().reset_index()
 
         if df.empty:
             logger.warning("No data returned from FRED for symbols: %s", symbols)
@@ -180,26 +199,10 @@ class FredCollector(BaseCollector[pd.DataFrame]):
                 columns=["timestamp", "series_id", "source", "value", "unit"]
             )
 
-        # Normalize to long format
-        # OpenBB returns wide format with date index and columns per series
-        df = df.reset_index()
-
-        # Handle different possible index column names
-        date_col = None
-        for col in ["date", "index", "timestamp"]:
-            if col in df.columns:
-                date_col = col
-                break
-
-        if date_col is None and df.index.name:
-            df = df.reset_index()
-            date_col = df.columns[0]
-
-        if date_col is None:
-            raise ValueError("Could not identify date column in FRED response")
+        # Find date column
+        date_col = _find_date_column(df)
 
         # Melt to long format
-        id_vars = [date_col]
         value_vars = [col for col in df.columns if col in symbols]
 
         if not value_vars:
@@ -209,34 +212,28 @@ class FredCollector(BaseCollector[pd.DataFrame]):
             )
 
         df_long = df.melt(
-            id_vars=id_vars,
+            id_vars=[date_col],
             value_vars=value_vars,
             var_name="series_id",
             value_name="value",
         )
 
-        # Rename date column
+        # Normalize columns
         df_long = df_long.rename(columns={date_col: "timestamp"})
-
-        # Add source and unit columns
+        df_long["timestamp"] = pd.to_datetime(df_long["timestamp"])
         df_long["source"] = "fred"
         df_long["unit"] = df_long["series_id"].map(UNIT_MAP).fillna("unknown")
 
-        # Ensure timestamp is datetime
-        df_long["timestamp"] = pd.to_datetime(df_long["timestamp"])
-
-        # Drop NaN values
-        df_long = df_long.dropna(subset=["value"])
-
-        # Sort by timestamp
-        df_long = df_long.sort_values("timestamp").reset_index(drop=True)
+        # Clean and sort
+        df_long = (
+            df_long.dropna(subset=["value"])
+            .sort_values("timestamp")
+            .reset_index(drop=True)
+        )
 
         logger.info("Fetched %d data points from FRED", len(df_long))
 
-        result_df: pd.DataFrame = df_long[
-            ["timestamp", "series_id", "source", "value", "unit"]
-        ]
-        return result_df
+        return df_long[["timestamp", "series_id", "source", "value", "unit"]]
 
     @staticmethod
     def calculate_net_liquidity(df: pd.DataFrame) -> pd.DataFrame:
