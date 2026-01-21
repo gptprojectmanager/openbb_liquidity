@@ -31,6 +31,7 @@ dependencies = [
     # Resilience patterns
     "tenacity>=9.0.0",
     "purgatory-circuitbreaker>=0.7.0",
+    "setuptools>=70.0.0",  # Required by purgatory for pkg_resources
 
     # Redis for pub/sub and shared state
     "redis[hiredis]>=5.0.0",
