@@ -149,9 +149,12 @@ class FredCollector(BaseCollector[pd.DataFrame]):
         Raises:
             CollectorFetchError: If data fetch fails after retries.
         """
-        symbols = symbols or ["WALCL", "WLRRAL", "WDTGAL", "WRESBAL"]
-        start_date = start_date or datetime.now(UTC) - timedelta(days=30)
-        end_date = end_date or datetime.now(UTC)
+        if symbols is None:
+            symbols = ["WALCL", "WLRRAL", "WDTGAL", "WRESBAL"]
+        if start_date is None:
+            start_date = datetime.now(UTC) - timedelta(days=30)
+        if end_date is None:
+            end_date = datetime.now(UTC)
 
         async def _fetch() -> pd.DataFrame:
             return await asyncio.to_thread(
