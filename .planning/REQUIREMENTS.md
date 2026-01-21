@@ -25,6 +25,43 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **DATA-14**: Collector retrieves US Treasury yield curve from FRED API
 - [ ] **DATA-15**: Collector retrieves credit spreads (IG, HY) from FRED API
 
+### FX & Currency Flows
+
+- [ ] **FX-01**: Collector retrieves DXY (Dollar Index) from Yahoo Finance/FRED
+- [ ] **FX-02**: Collector retrieves USD/JPY rate for carry trade monitoring
+- [ ] **FX-03**: Collector retrieves USD/CNY rate for yuan devaluation signals
+- [ ] **FX-04**: Collector retrieves EUR/USD rate
+- [ ] **FX-05**: Collector retrieves global FX reserves data from IMF COFER (quarterly)
+
+### Commodities & Metals
+
+- [ ] **CMDTY-01**: Collector retrieves Gold spot price (XAU/USD)
+- [ ] **CMDTY-02**: Collector retrieves Gold ETF flows (GLD holdings)
+- [ ] **CMDTY-03**: Collector retrieves Copper price ("Dr. Copper" economic indicator)
+- [ ] **CMDTY-04**: Collector retrieves WTI Crude Oil price
+- [ ] **CMDTY-05**: Collector retrieves Silver spot price (XAG/USD)
+
+### Capital Flows
+
+- [ ] **FLOW-01**: Collector retrieves TIC data (Treasury International Capital) from US Treasury
+- [ ] **FLOW-02**: Collector retrieves foreign CB US Treasury holdings
+- [ ] **FLOW-03**: Collector retrieves major ETF flows (SPY, TLT, GLD, HYG)
+- [ ] **FLOW-04**: Collector retrieves Fed custody holdings for foreign CBs
+
+### Stress Indicators
+
+- [ ] **STRESS-01**: System calculates SOFR-OIS spread (funding market stress)
+- [ ] **STRESS-02**: Collector retrieves cross-currency basis (EUR, JPY, GBP vs USD)
+- [ ] **STRESS-03**: Collector retrieves FRA-OIS spread
+- [ ] **STRESS-04**: System calculates repo market stress indicator (fails, haircuts)
+
+### Credit Markets
+
+- [ ] **CREDIT-01**: Collector retrieves corporate bond issuance pace (IG, HY)
+- [ ] **CREDIT-02**: Collector retrieves high-yield OAS (option-adjusted spread)
+- [ ] **CREDIT-03**: Collector retrieves SLOOS (Senior Loan Officer Opinion Survey) from Fed
+- [ ] **CREDIT-04**: Collector retrieves commercial paper rates (AA financial, nonfinancial)
+
 ### Liquidity Calculation
 
 - [ ] **CALC-01**: System calculates Net Liquidity Index using Hayes formula (WALCL - TGA - RRP)
@@ -37,6 +74,22 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **ANLYS-01**: Regime classifier outputs Expansionary/Neutral/Contractionary state
 - [ ] **ANLYS-02**: System tracks >85% of global monetary flows via Tier 1 CB coverage
 
+### Cross-Asset Correlations
+
+- [ ] **CORR-01**: System calculates rolling BTC/Net Liquidity correlation (30d, 90d)
+- [ ] **CORR-02**: System calculates rolling SPX/Global Liquidity correlation (30d, 90d)
+- [ ] **CORR-03**: System calculates Gold/Real Rates correlation
+- [ ] **CORR-04**: Dashboard displays correlation heatmap across major assets
+- [ ] **CORR-05**: Alert triggers when correlation regime shifts (>0.3 change)
+
+### Calendar Effects
+
+- [ ] **CAL-01**: System tracks US Treasury auction calendar with settlement dates
+- [ ] **CAL-02**: System flags month-end/quarter-end liquidity windows
+- [ ] **CAL-03**: System tracks tax payment dates (April 15, Sept 15, Dec 15)
+- [ ] **CAL-04**: System tracks Fed meeting dates and blackout periods
+- [ ] **CAL-05**: Dashboard shows calendar overlay on liquidity charts
+
 ### API & Integration
 
 - [ ] **API-01**: FastAPI server exposes GET /liquidity/net endpoint
@@ -44,6 +97,10 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **API-03**: FastAPI server exposes GET /regime/current endpoint
 - [ ] **API-04**: FastAPI server exposes GET /metrics/stealth-qe endpoint
 - [ ] **API-05**: NautilusTrader macro filter queries regime via REST API
+- [ ] **API-06**: FastAPI server exposes GET /fx/dxy endpoint
+- [ ] **API-07**: FastAPI server exposes GET /stress/indicators endpoint
+- [ ] **API-08**: FastAPI server exposes GET /correlations endpoint
+- [ ] **API-09**: FastAPI server exposes GET /calendar/events endpoint
 
 ### Alerting & Visualization
 
@@ -51,8 +108,14 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **VIZ-02**: Plotly dashboard displays Global Liquidity Index time series
 - [ ] **VIZ-03**: Plotly dashboard displays regime classification with color coding
 - [ ] **VIZ-04**: Plotly dashboard exportable to standalone HTML
+- [ ] **VIZ-05**: Dashboard displays FX panel (DXY, major pairs)
+- [ ] **VIZ-06**: Dashboard displays commodities panel (Gold, Copper, Oil)
+- [ ] **VIZ-07**: Dashboard displays stress indicators panel with threshold alerts
+- [ ] **VIZ-08**: Dashboard displays capital flows panel (TIC, ETF flows)
 - [ ] **ALERT-01**: Discord webhook fires on regime state change
 - [ ] **ALERT-02**: Discord webhook includes previous/current regime and key metrics
+- [ ] **ALERT-03**: Discord webhook fires on stress indicator threshold breach
+- [ ] **ALERT-04**: Discord webhook fires on significant DXY move (>1% daily)
 
 ### Quality & Validation
 
@@ -75,12 +138,17 @@ Deferred to future release. Tracked but not in current roadmap.
 
 - **ADV-01**: RMP (Reserve Management Purchases) tracking as new Fed mechanism
 - **ADV-02**: Swap lines stress indicator between Fed and 5 major CBs
-- **ADV-03**: Gold flows tracking (Switzerland → China/India) for de-dollarization signal
+- **ADV-03**: Gold flows tracking via Switzerland (refinery data) for de-dollarization
 
 ### Crypto Integration
 
 - **CRYPTO-01**: Crypto flow tracking (stablecoin supply, exchange flows)
-- **CRYPTO-02**: BTC/Liquidity correlation dashboard
+- **CRYPTO-02**: On-chain liquidity metrics (stablecoin market cap, DEX TVL)
+
+### Advanced Capital Flows
+
+- **FLOW-05**: Sovereign wealth fund flows (Norway, Singapore, etc.)
+- **FLOW-06**: Eurodollar system tracking (offshore USD)
 
 ## Out of Scope
 
@@ -115,23 +183,65 @@ Which phases cover which requirements. Updated by create-roadmap.
 | DATA-13 | - | Pending |
 | DATA-14 | - | Pending |
 | DATA-15 | - | Pending |
+| FX-01 | - | Pending |
+| FX-02 | - | Pending |
+| FX-03 | - | Pending |
+| FX-04 | - | Pending |
+| FX-05 | - | Pending |
+| CMDTY-01 | - | Pending |
+| CMDTY-02 | - | Pending |
+| CMDTY-03 | - | Pending |
+| CMDTY-04 | - | Pending |
+| CMDTY-05 | - | Pending |
+| FLOW-01 | - | Pending |
+| FLOW-02 | - | Pending |
+| FLOW-03 | - | Pending |
+| FLOW-04 | - | Pending |
+| STRESS-01 | - | Pending |
+| STRESS-02 | - | Pending |
+| STRESS-03 | - | Pending |
+| STRESS-04 | - | Pending |
+| CREDIT-01 | - | Pending |
+| CREDIT-02 | - | Pending |
+| CREDIT-03 | - | Pending |
+| CREDIT-04 | - | Pending |
 | CALC-01 | - | Pending |
 | CALC-02 | - | Pending |
 | CALC-03 | - | Pending |
 | CALC-04 | - | Pending |
 | ANLYS-01 | - | Pending |
 | ANLYS-02 | - | Pending |
+| CORR-01 | - | Pending |
+| CORR-02 | - | Pending |
+| CORR-03 | - | Pending |
+| CORR-04 | - | Pending |
+| CORR-05 | - | Pending |
+| CAL-01 | - | Pending |
+| CAL-02 | - | Pending |
+| CAL-03 | - | Pending |
+| CAL-04 | - | Pending |
+| CAL-05 | - | Pending |
 | API-01 | - | Pending |
 | API-02 | - | Pending |
 | API-03 | - | Pending |
 | API-04 | - | Pending |
 | API-05 | - | Pending |
+| API-06 | - | Pending |
+| API-07 | - | Pending |
+| API-08 | - | Pending |
+| API-09 | - | Pending |
 | VIZ-01 | - | Pending |
 | VIZ-02 | - | Pending |
 | VIZ-03 | - | Pending |
 | VIZ-04 | - | Pending |
+| VIZ-05 | - | Pending |
+| VIZ-06 | - | Pending |
+| VIZ-07 | - | Pending |
+| VIZ-08 | - | Pending |
 | ALERT-01 | - | Pending |
 | ALERT-02 | - | Pending |
+| ALERT-03 | - | Pending |
+| ALERT-04 | - | Pending |
 | QA-01 | - | Pending |
 | QA-02 | - | Pending |
 | QA-03 | - | Pending |
@@ -144,10 +254,10 @@ Which phases cover which requirements. Updated by create-roadmap.
 | QA-10 | - | Pending |
 
 **Coverage:**
-- v1 requirements: 42 total
+- v1 requirements: 84 total
 - Mapped to phases: 0 (pending create-roadmap)
-- Unmapped: 42 ⚠️
+- Unmapped: 84 ⚠️
 
 ---
 *Requirements defined: 2026-01-21*
-*Last updated: 2026-01-21 after QA requirements added*
+*Last updated: 2026-01-21 after 360° coverage expansion*
