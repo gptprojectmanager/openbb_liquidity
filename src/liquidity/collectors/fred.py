@@ -28,20 +28,42 @@ logger = logging.getLogger(__name__)
 # FRED series mapping
 # Keys are internal names, values are FRED series IDs
 SERIES_MAP: dict[str, str] = {
+    # Fed Balance Sheet (Phase 1 core)
     "fed_total_assets": "WALCL",  # Fed Total Assets (millions USD, weekly)
     "rrp": "WLRRAL",  # Reverse Repo (billions USD, weekly)
     "tga": "WDTGAL",  # Treasury General Account (billions USD, weekly)
     "bank_reserves": "WRESBAL",  # Reserve Balances (millions USD, biweekly)
     "sofr": "SOFR",  # Secured Overnight Financing Rate (percent, daily)
+    # Volatility (Phase 1 market indicators)
+    "vix": "VIXCLS",  # VIX (percent, daily)
+    "vix3m": "VXVCLS",  # VIX3M for term structure (percent, daily)
+    # Yield Curve (Phase 1 market indicators)
+    "dgs2": "DGS2",  # 2-Year Treasury (percent, daily)
+    "dgs10": "DGS10",  # 10-Year Treasury (percent, daily)
+    "t10y2y": "T10Y2Y",  # 10Y-2Y Spread, pre-calculated (percent, daily)
+    # Credit Spreads (Phase 1 market indicators)
+    "hy_oas": "BAMLH0A0HYM2",  # High Yield OAS (bps, daily)
+    "ig_oas": "BAMLC0A0CM",  # Investment Grade OAS (bps, daily)
 }
 
-# Unit conversions for standardization (all to millions USD)
+# Unit conversions for standardization
 UNIT_MAP: dict[str, str] = {
+    # Fed Balance Sheet
     "WALCL": "millions_usd",
     "WLRRAL": "billions_usd",
     "WDTGAL": "billions_usd",
     "WRESBAL": "millions_usd",
     "SOFR": "percent",
+    # Volatility
+    "VIXCLS": "percent",
+    "VXVCLS": "percent",
+    # Yield Curve
+    "DGS2": "percent",
+    "DGS10": "percent",
+    "T10Y2Y": "percent",
+    # Credit Spreads
+    "BAMLH0A0HYM2": "bps",  # Basis points
+    "BAMLC0A0CM": "bps",  # Basis points
 }
 
 
@@ -266,6 +288,106 @@ class FredCollector(BaseCollector[pd.DataFrame]):
         )
 
         return result
+
+    @staticmethod
+    def calculate_yield_spread(df: pd.DataFrame) -> pd.DataFrame:
+        """Calculate yield spread from DGS10 and DGS2.
+
+        Yield Spread = DGS10 - DGS2
+
+        Useful for custom calculations if T10Y2Y is unavailable or for validation.
+
+        Args:
+            df: DataFrame with timestamp, series_id, value columns.
+
+        Returns:
+            DataFrame with timestamp, yield_spread columns (in percent).
+        """
+        required = {"DGS10", "DGS2"}
+        available = set(df["series_id"].unique())
+
+        if not required.issubset(available):
+            missing = required - available
+            raise ValueError(f"Missing required series for yield spread: {missing}")
+
+        # Pivot to wide format for calculation
+        pivot = df.pivot(index="timestamp", columns="series_id", values="value")
+
+        # Calculate spread
+        yield_spread = pivot["DGS10"] - pivot["DGS2"]
+
+        result = pd.DataFrame(
+            {
+                "timestamp": yield_spread.index,
+                "yield_spread": yield_spread.values,
+            }
+        ).dropna()
+
+        result["unit"] = "percent"
+
+        logger.info(
+            "Calculated Yield Spread: min=%.2f, max=%.2f, latest=%.2f (percent)",
+            result["yield_spread"].min(),
+            result["yield_spread"].max(),
+            result["yield_spread"].iloc[-1] if len(result) > 0 else 0,
+        )
+
+        return result
+
+    async def collect_volatility(
+        self,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+    ) -> pd.DataFrame:
+        """Convenience method to collect volatility series (VIX, VIX3M).
+
+        Args:
+            start_date: Start date for data fetch. Defaults to 30 days ago.
+            end_date: End date for data fetch. Defaults to today.
+
+        Returns:
+            DataFrame with volatility data.
+        """
+        symbols = ["VIXCLS", "VXVCLS"]
+        return await self.collect(symbols, start_date, end_date)
+
+    async def collect_yields(
+        self,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+    ) -> pd.DataFrame:
+        """Convenience method to collect yield curve series.
+
+        Fetches DGS2, DGS10, and T10Y2Y (pre-calculated spread).
+
+        Args:
+            start_date: Start date for data fetch. Defaults to 30 days ago.
+            end_date: End date for data fetch. Defaults to today.
+
+        Returns:
+            DataFrame with yield curve data.
+        """
+        symbols = ["DGS2", "DGS10", "T10Y2Y"]
+        return await self.collect(symbols, start_date, end_date)
+
+    async def collect_credit(
+        self,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+    ) -> pd.DataFrame:
+        """Convenience method to collect credit spread series.
+
+        Fetches HY OAS and IG OAS (ICE BofA indices).
+
+        Args:
+            start_date: Start date for data fetch. Defaults to 30 days ago.
+            end_date: End date for data fetch. Defaults to today.
+
+        Returns:
+            DataFrame with credit spread data (in basis points).
+        """
+        symbols = ["BAMLH0A0HYM2", "BAMLC0A0CM"]
+        return await self.collect(symbols, start_date, end_date)
 
 
 # Register collector with the registry
