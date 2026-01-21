@@ -47,11 +47,13 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **FLOW-02**: Collector retrieves foreign CB US Treasury holdings
 - [ ] **FLOW-03**: Collector retrieves major ETF flows (SPY, TLT, GLD, HYG)
 - [ ] **FLOW-04**: Collector retrieves Fed custody holdings for foreign CBs
+- [ ] **FLOW-05**: Collector retrieves BIS International Banking Statistics (Eurodollar size, quarterly)
+- [ ] **FLOW-06**: Collector retrieves BIS Locational Banking Statistics (cross-border USD flows)
 
 ### Stress Indicators
 
 - [ ] **STRESS-01**: System calculates SOFR-OIS spread (funding market stress)
-- [ ] **STRESS-02**: Collector retrieves cross-currency basis (EUR, JPY, GBP vs USD)
+- [ ] **STRESS-02**: Collector retrieves cross-currency basis (EUR, JPY, GBP vs USD) — Eurodollar stress signal
 - [ ] **STRESS-03**: Collector retrieves FRA-OIS spread
 - [ ] **STRESS-04**: System calculates repo market stress indicator (fails, haircuts)
 
@@ -147,8 +149,7 @@ Deferred to future release. Tracked but not in current roadmap.
 
 ### Advanced Capital Flows
 
-- **FLOW-05**: Sovereign wealth fund flows (Norway, Singapore, etc.)
-- **FLOW-06**: Eurodollar system tracking (offshore USD)
+- **FLOW-07**: Sovereign wealth fund flows (Norway, Singapore, etc.) — opaque, quarterly
 
 ## Out of Scope
 
@@ -197,6 +198,8 @@ Which phases cover which requirements. Updated by create-roadmap.
 | FLOW-02 | - | Pending |
 | FLOW-03 | - | Pending |
 | FLOW-04 | - | Pending |
+| FLOW-05 | - | Pending |
+| FLOW-06 | - | Pending |
 | STRESS-01 | - | Pending |
 | STRESS-02 | - | Pending |
 | STRESS-03 | - | Pending |
@@ -254,10 +257,10 @@ Which phases cover which requirements. Updated by create-roadmap.
 | QA-10 | - | Pending |
 
 **Coverage:**
-- v1 requirements: 84 total
+- v1 requirements: 86 total
 - Mapped to phases: 0 (pending create-roadmap)
-- Unmapped: 84 ⚠️
+- Unmapped: 86 ⚠️
 
 ---
 *Requirements defined: 2026-01-21*
-*Last updated: 2026-01-21 after 360° coverage expansion*
+*Last updated: 2026-01-21 after adding BIS Eurodollar data*
