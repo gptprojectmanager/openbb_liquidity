@@ -16,7 +16,7 @@ None
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation & Core Data** - Project setup, FRED API, Fed balance sheet collectors
+- [x] **Phase 1: Foundation & Core Data** - Project setup, FRED API, Fed balance sheet collectors
 - [ ] **Phase 2: Global CB Collectors** - ECB, BoJ, PBoC, BoE, SNB, BoC balance sheet collectors
 - [ ] **Phase 3: Overnight Rates & FX** - SOFR, €STR, SONIA, CORRA + FX pair collectors
 - [ ] **Phase 4: Market Indicators** - Bonds, volatility (MOVE, VIX), commodities
@@ -39,7 +39,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-01: Project scaffolding (uv, OpenBB, QuestDB, structure)
 - [x] 01-02: FRED API collector base + Fed balance sheet (WALCL, TGA, RRP)
-- [ ] 01-03: MOVE, VIX, yield curve, credit spreads collectors
+- [x] 01-03: MOVE, VIX, yield curve, credit spreads collectors
 
 ### Phase 2: Global CB Collectors
 **Goal**: Complete Tier 1 central bank coverage (>85% global flows)
@@ -165,7 +165,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Core Data | 2/3 | In progress | - |
+| 1. Foundation & Core Data | 3/3 | Complete | 2026-01-21 |
 | 2. Global CB Collectors | 0/4 | Not started | - |
 | 3. Overnight Rates & FX | 0/3 | Not started | - |
 | 4. Market Indicators | 0/2 | Not started | - |

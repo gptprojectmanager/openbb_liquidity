@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-21)
 ## Current Position
 
 Phase: 1 of 10 (Foundation & Core Data)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-01-21 — Completed 01-02-PLAN.md
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-01-21 — Completed 01-03-PLAN.md
 
-Progress: ██░░░░░░░░ 6%
+Progress: ███░░░░░░░ 9%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 11.5 min
-- Total execution time: 0.38 hours
+- Total plans completed: 3
+- Average duration: 9.7 min
+- Total execution time: 0.48 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1 | 2/3 | 23 min | 11.5 min |
+| 1 | 3/3 | 29 min | 9.7 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (8 min), 01-02 (15 min)
-- Trend: Steady
+- Last 5 plans: 01-01 (8 min), 01-02 (15 min), 01-03 (6 min)
+- Trend: Accelerating
 
 ## Accumulated Context
 
@@ -48,6 +48,8 @@ Recent decisions affecting current work:
 | 01-02 | psycopg2-binary for PGWire | Standard PostgreSQL driver for QuestDB |
 | 01-02 | MONTH partitioning | Optimal for macro data (daily/weekly) |
 | 01-02 | asyncio.to_thread() for OpenBB | OpenBB SDK is sync-only |
+| 01-03 | MOVE via Yahoo Finance | Not available in FRED, used OpenBB yfinance |
+| 01-03 | Credit spreads in bps | Matches ICE BofA OAS index conventions |
 
 ### Pending Todos
 
@@ -60,6 +62,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-01-21 20:24
-Stopped at: Completed 01-02-PLAN.md (FRED collector & QuestDB storage)
+Last session: 2026-01-21 20:33
+Stopped at: Completed 01-03-PLAN.md (Market indicators collectors - Phase 1 complete)
 Resume file: None
