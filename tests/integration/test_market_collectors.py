@@ -229,7 +229,7 @@ class TestFullPhase1Pipeline:
         assert not credit_df.empty, "Credit spread data should not be empty"
 
         # 5. MOVE (from Yahoo)
-        move_df = await yahoo_collector.collect_move()
+        _move_df = await yahoo_collector.collect_move()  # noqa: F841
         # MOVE may not be available, so we don't require it
 
         # Store Fed data

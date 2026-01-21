@@ -27,6 +27,19 @@ SYMBOLS: dict[str, str] = {
     "move": "^MOVE",  # MOVE Bond Volatility Index
 }
 
+# Period to timedelta mapping
+PERIOD_MAP: dict[str, timedelta] = {
+    "1d": timedelta(days=1),
+    "5d": timedelta(days=5),
+    "1mo": timedelta(days=30),
+    "3mo": timedelta(days=90),
+    "6mo": timedelta(days=180),
+    "1y": timedelta(days=365),
+    "2y": timedelta(days=730),
+    "5y": timedelta(days=1825),
+    "10y": timedelta(days=3650),
+}
+
 
 class YahooCollector(BaseCollector[pd.DataFrame]):
     """Yahoo Finance data collector using OpenBB SDK.
@@ -84,12 +97,10 @@ class YahooCollector(BaseCollector[pd.DataFrame]):
         """
         if symbols is None:
             symbols = ["^MOVE"]
-
         if end_date is None:
             end_date = datetime.now(UTC)
 
         async def _fetch() -> pd.DataFrame:
-            # OpenBB is synchronous, wrap in thread
             return await asyncio.to_thread(
                 self._fetch_sync, symbols, start_date, end_date, period
             )
@@ -124,38 +135,20 @@ class YahooCollector(BaseCollector[pd.DataFrame]):
 
         for symbol in symbols:
             try:
-                # Fetch data using OpenBB equity historical
-                # Note: OpenBB uses yfinance provider for Yahoo Finance data
-                if start_date:
-                    result = obb.equity.price.historical(
-                        symbol=symbol,
-                        start_date=start_date.strftime("%Y-%m-%d"),
-                        end_date=end_date.strftime("%Y-%m-%d"),
-                        provider="yfinance",
-                    )
-                else:
-                    # Use period-based fetch for longer historical data
-                    # Calculate start_date from period
-                    period_map = {
-                        "1d": timedelta(days=1),
-                        "5d": timedelta(days=5),
-                        "1mo": timedelta(days=30),
-                        "3mo": timedelta(days=90),
-                        "6mo": timedelta(days=180),
-                        "1y": timedelta(days=365),
-                        "2y": timedelta(days=730),
-                        "5y": timedelta(days=1825),
-                        "10y": timedelta(days=3650),
-                    }
-                    delta = period_map.get(period, timedelta(days=1825))  # Default 5y
+                # Calculate start date from period if not provided
+                if start_date is None:
+                    delta = PERIOD_MAP.get(period, timedelta(days=1825))  # Default 5y
                     calc_start = end_date - delta
+                else:
+                    calc_start = start_date
 
-                    result = obb.equity.price.historical(
-                        symbol=symbol,
-                        start_date=calc_start.strftime("%Y-%m-%d"),
-                        end_date=end_date.strftime("%Y-%m-%d"),
-                        provider="yfinance",
-                    )
+                # Fetch data using OpenBB equity historical
+                result = obb.equity.price.historical(
+                    symbol=symbol,
+                    start_date=calc_start.strftime("%Y-%m-%d"),
+                    end_date=end_date.strftime("%Y-%m-%d"),
+                    provider="yfinance",
+                )
 
                 df = result.to_df()
 
@@ -167,30 +160,29 @@ class YahooCollector(BaseCollector[pd.DataFrame]):
                 df = df.reset_index()
 
                 # Find date column
-                date_col = None
-                for col in ["date", "index", "timestamp"]:
-                    if col in df.columns:
-                        date_col = col
-                        break
+                date_col = next(
+                    (
+                        col
+                        for col in ["date", "index", "timestamp"]
+                        if col in df.columns
+                    ),
+                    df.columns[0],
+                )
 
-                if date_col is None:
-                    date_col = df.columns[0]
-
-                # Create normalized row for each data point
-                for _, row in df.iterrows():
-                    all_data.append(
-                        {
-                            "timestamp": pd.to_datetime(row[date_col]),
-                            "symbol": symbol,
-                            "source": "yahoo",
-                            "value": row.get("close", row.get("adj_close")),
-                            "unit": "index",
-                        }
-                    )
+                # Vectorized normalization instead of row iteration
+                normalized = pd.DataFrame(
+                    {
+                        "timestamp": pd.to_datetime(df[date_col]),
+                        "symbol": symbol,
+                        "source": "yahoo",
+                        "value": df.get("close", df.get("adj_close")),
+                        "unit": "index",
+                    }
+                )
+                all_data.append(normalized)
 
             except Exception as e:
                 logger.warning("Failed to fetch %s: %s", symbol, e)
-                # For MOVE index, try alternative approach if OpenBB fails
                 if symbol == "^MOVE":
                     logger.info("Attempting fallback for MOVE index")
                     continue
@@ -204,13 +196,12 @@ class YahooCollector(BaseCollector[pd.DataFrame]):
                 columns=["timestamp", "symbol", "source", "value", "unit"]
             )
 
-        result_df = pd.DataFrame(all_data)
-
-        # Drop any rows with NaN values
-        result_df = result_df.dropna(subset=["value"])
-
-        # Sort by timestamp
-        result_df = result_df.sort_values("timestamp").reset_index(drop=True)
+        result_df = pd.concat(all_data, ignore_index=True)
+        result_df = (
+            result_df.dropna(subset=["value"])
+            .sort_values("timestamp")
+            .reset_index(drop=True)
+        )
 
         logger.info("Fetched %d data points from Yahoo Finance", len(result_df))
 
@@ -248,9 +239,11 @@ class YahooCollector(BaseCollector[pd.DataFrame]):
         Returns:
             DataFrame with MOVE index data.
         """
-        if start_date is None:
-            start_date = datetime.now(UTC) - timedelta(days=30)
-        return await self.collect(["^MOVE"], start_date=start_date, end_date=end_date)
+        return await self.collect(
+            ["^MOVE"],
+            start_date=start_date or datetime.now(UTC) - timedelta(days=30),
+            end_date=end_date,
+        )
 
 
 # Register collector with the registry

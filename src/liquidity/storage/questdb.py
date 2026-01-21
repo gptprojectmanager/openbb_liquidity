@@ -168,12 +168,10 @@ class QuestDBStorage:
 
         # Use default symbols for known tables
         if symbols is None:
-            if table == RAW_DATA_TABLE:
-                symbols = RAW_DATA_SYMBOLS
-            elif table == LIQUIDITY_INDEXES_TABLE:
-                symbols = LIQUIDITY_INDEXES_SYMBOLS
-            else:
-                symbols = []
+            symbols = {
+                RAW_DATA_TABLE: RAW_DATA_SYMBOLS,
+                LIQUIDITY_INDEXES_TABLE: LIQUIDITY_INDEXES_SYMBOLS,
+            }.get(table, [])
 
         # Ensure timestamp column is datetime
         if timestamp_col in df.columns:
@@ -183,12 +181,8 @@ class QuestDBStorage:
         try:
             with Sender(self.host, self.ilp_port) as sender:
                 sender.dataframe(
-                    df,
-                    table_name=table,
-                    at=timestamp_col,
-                    symbols=symbols,
+                    df, table_name=table, at=timestamp_col, symbols=symbols
                 )
-                # Auto-flush on context exit
 
             rows = len(df)
             logger.info("Ingested %d rows to table '%s'", rows, table)
@@ -265,10 +259,9 @@ class QuestDBStorage:
         latest = self.get_latest(series_id, table)
         if latest and "timestamp" in latest:
             ts = latest["timestamp"]
-            if isinstance(ts, datetime):
-                return ts
-            result: datetime = pd.to_datetime(ts).to_pydatetime()
-            return result
+            return (
+                ts if isinstance(ts, datetime) else pd.to_datetime(ts).to_pydatetime()
+            )
         return None
 
     def health_check(self) -> bool:

@@ -40,13 +40,13 @@ def _find_date_column(df: pd.DataFrame) -> str:
     """
     for col in ["date", "index", "timestamp"]:
         if col in df.columns:
-            return col
+            return str(col)
 
     if df.index.name:
-        return df.index.name
+        return str(df.index.name)
 
     if len(df.columns) > 0:
-        return df.columns[0]
+        return str(df.columns[0])
 
     raise ValueError("Could not identify date column in DataFrame")
 
