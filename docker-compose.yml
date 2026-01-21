@@ -1,0 +1,90 @@
+# Docker Compose for Global Liquidity Monitor
+# Services: QuestDB (time-series), Redis (pub/sub + caching)
+#
+# Port allocation strategy:
+# - Development: Use nautilus-questdb (9000/9009/8812) and nautilus-redis (6379)
+# - Isolated testing: Use liquidity-* containers with alternate ports
+#
+# Default: Share existing NautilusTrader infrastructure (same QuestDB/Redis)
+# Set LIQUIDITY_ISOLATED=true to use dedicated containers
+
+services:
+  questdb:
+    image: questdb/questdb:latest
+    container_name: liquidity-questdb
+    profiles:
+      - isolated
+    ports:
+      - "9002:9000"   # Web console & REST API (alt: 9002)
+      - "9011:9009"   # ILP (InfluxDB Line Protocol) (alt: 9011)
+      - "8814:8812"   # PostgreSQL wire protocol (alt: 8814)
+    volumes:
+      - questdb_data:/var/lib/questdb
+    environment:
+      - QDB_TELEMETRY_ENABLED=false
+      - QDB_HTTP_MIN_ENABLED=false
+      # ILP defaults to enabled
+      # PostgreSQL wire protocol defaults to enabled
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - liquidity-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: liquidity-redis
+    profiles:
+      - isolated
+    ports:
+      - "6381:6379"   # Redis port (alt: 6381)
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+    networks:
+      - liquidity-network
+
+  # Prometheus (commented out - add when metrics needed)
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: liquidity-prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #     - prometheus_data:/prometheus
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #     - '--storage.tsdb.path=/prometheus'
+  #   healthcheck:
+  #     test: ["CMD", "wget", "-q", "--spider", "http://localhost:9090/-/healthy"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #   restart: unless-stopped
+  #   networks:
+  #     - liquidity-network
+
+volumes:
+  questdb_data:
+    name: liquidity-questdb-data
+  redis_data:
+    name: liquidity-redis-data
+  # prometheus_data:
+  #   name: liquidity-prometheus-data
+
+networks:
+  liquidity-network:
+    name: liquidity-network
+    driver: bridge
