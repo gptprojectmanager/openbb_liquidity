@@ -8,9 +8,36 @@ name: Sync Planning
 
 jobs:
   sync:
-    uses: gptcompany/claude-config/.github/workflows/_reusable-sync-planning.yml@main
-    secrets: inherit
-    with:
-      framework: 'auto'
-      create-project: true
-      sync-todos: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Download sync scripts
+        run: |
+          mkdir -p .github/scripts
+          curl -sL https://raw.githubusercontent.com/gptcompany/claude-config/main/scripts/github_sync_core.py -o .github/scripts/github_sync_core.py
+          curl -sL https://raw.githubusercontent.com/gptcompany/claude-config/main/scripts/roadmaptoissues.py -o .github/scripts/roadmaptoissues.py
+
+      - name: Debug token
+        env:
+          GH_TOKEN: ${{ secrets.GH_PROJECT_PAT }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "ERROR: GH_PROJECT_PAT secret is empty!"
+            exit 1
+          fi
+          echo "Token is set (masked)"
+          gh api user --jq '.login' || echo "Cannot identify user"
+
+      - name: Sync to GitHub
+        env:
+          GH_TOKEN: ${{ secrets.GH_PROJECT_PAT }}
+        run: |
+          cd .github/scripts
+          python roadmaptoissues.py --roadmap ../../.planning/ROADMAP.md --auto-project --create-project --sync-todos
