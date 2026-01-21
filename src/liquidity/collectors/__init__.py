@@ -12,6 +12,8 @@ from liquidity.collectors.base import (
 )
 from liquidity.collectors.fred import SERIES_MAP, FredCollector
 from liquidity.collectors.registry import CollectorRegistry, registry
+from liquidity.collectors.yahoo import SYMBOLS as YAHOO_SYMBOLS
+from liquidity.collectors.yahoo import YahooCollector
 
 __all__ = [
     # Base
@@ -25,4 +27,7 @@ __all__ = [
     # FRED
     "FredCollector",
     "SERIES_MAP",
+    # Yahoo
+    "YahooCollector",
+    "YAHOO_SYMBOLS",
 ]
