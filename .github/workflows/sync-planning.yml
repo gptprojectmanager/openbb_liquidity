@@ -40,4 +40,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PROJECT_PAT }}
         run: |
           cd .github/scripts
-          python roadmaptoissues.py --roadmap ../../.planning/ROADMAP.md --auto-project --create-project --sync-todos
+          python roadmaptoissues.py --roadmap ../../.planning/ROADMAP.md --no-project --sync-todos
