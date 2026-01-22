@@ -914,7 +914,67 @@
       "timestamp": "2026-01-22T14:16:20.396291",
       "file_path": "/media/sam/1TB/openbb_liquidity/.planning/phases/02-global-cb-collectors/02-UAT.md",
       "content_length": 1547
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:22:00.600941",
+      "command": "uv run python -c \"\nimport asyncio\nfrom liquidity.collectors.snb import SNBCollector\nc = SNBCollector()\ndf = asyncio.run(c.collect())\nprint(f'SNB: {len(df)} rows, latest: {df[\\\"value\\\"].iloc[-1]:,.0f} million CHF')\n\"",
+      "description": "Test 1: SNB Collector"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:22:32.921055",
+      "command": "uv run python -c \"\nimport asyncio\nfrom liquidity.collectors.boc import BOCCollector\nc = BOCCollector()\ndf = asyncio.run(c.collect_total_assets())\nprint(f'BoC: {len(df)} rows, latest: {df[\\\"value\\\"].iloc[-1]:,.0f} million CAD')\n\"",
+      "description": "Test 2: BoC Collector"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:22:49.619919",
+      "command": "uv run python -c \"\nimport asyncio\nfrom liquidity.collectors.boe import BOECollector\nc = BOECollector()\ndf = asyncio.run(c.collect())\nprint(f'BoE: {len(df)} rows, source: {df[\\\"source\\\"].iloc[0]}, value: {df[\\\"value\\\"].iloc[-1]:,.0f} million GBP')\n\"",
+      "description": "Test 3: BoE Collector"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:23:06.507774",
+      "command": "uv run python -c \"\nimport asyncio\nfrom liquidity.collectors.pboc import PBOCCollector\nc = PBOCCollector()\ndf = asyncio.run(c.collect())\nprint(f'PBoC: {len(df)} rows, source: {df[\\\"source\\\"].iloc[0]}, value: {df[\\\"value\\\"].iloc[-1]:,.0f}')\n\"",
+      "description": "Test 4: PBoC Collector"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:23:30.504339",
+      "command": "uv run python -c \"\nfrom liquidity.collectors import registry\ncollectors = registry.list_collectors()\nprint(f'Registered collectors ({len(collectors)}): {collectors}')\n\"",
+      "description": "Test 5: Registry check"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:23:49.866097",
+      "command": "uv run python -c \"\nfrom liquidity.collectors.fred import FredCollector, SERIES_MAP\necb = SERIES_MAP.get('ecb_total_assets')\nboj = SERIES_MAP.get('boj_total_assets')\nprint(f'ECB: {ecb}, BoJ: {boj}')\n\"",
+      "description": "Test 6: FRED series mapping"
+    },
+    {
+      "operation": "write",
+      "timestamp": "2026-01-22T14:24:19.333416",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/phases/02-global-cb-collectors/02-UAT.md",
+      "content_length": 1689
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:24:32.621865",
+      "command": "git add .planning/phases/02-global-cb-collectors/02-UAT.md && git commit -m \"$(cat <<'EOF'\ntest(02): complete UAT - 6 passed, 0 issues\n\nPhase 2 Global CB Collectors validated:\n- SNB: 348 rows, 896,722M CHF\n- BoC: 2352 rows, 251,446M CAD\n- BoE: cached fallback working (848,000M GBP)\n- PBoC: cached fallback working (47.3T CNY)\n- Registry: 6 collectors registered\n- FRED: ECB/BoJ series mapped\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n)\"",
+      "description": "Commit UAT file"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:24:39.038953",
+      "command": "git add .planning/STATE.md .planning/ROADMAP.md src/liquidity/collectors/__init__.py && git commit -m \"$(cat <<'EOF'\ndocs(02): mark Phase 2 complete in STATE and ROADMAP\n\n- Phase 2: 5/5 plans complete\n- Progress: 20%\n- All global CB collectors implemented\n- Next: Phase 3 (Overnight Rates & FX)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n)\"",
+      "description": "Commit project tracking updates"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:24:43.178690",
+      "command": "git log --oneline -5",
+      "description": "Check recent commits"
     }
   ],
-  "last_updated": "2026-01-22T14:16:20.396316"
+  "last_updated": "2026-01-22T14:24:43.178718"
 }
