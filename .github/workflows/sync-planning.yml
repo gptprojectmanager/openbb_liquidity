@@ -21,10 +21,8 @@ jobs:
       - name: Download sync scripts
         run: |
           mkdir -p .github/scripts
-          # Using commit hash to bypass raw.githubusercontent.com cache
-          SYNC_VERSION=bda1619
-          curl -sL "https://raw.githubusercontent.com/gptcompany/claude-config/${SYNC_VERSION}/scripts/github_sync_core.py" -o .github/scripts/github_sync_core.py
-          curl -sL "https://raw.githubusercontent.com/gptcompany/claude-config/${SYNC_VERSION}/scripts/roadmaptoissues.py" -o .github/scripts/roadmaptoissues.py
+          curl -sL https://raw.githubusercontent.com/gptcompany/claude-config/main/scripts/github_sync_core.py -o .github/scripts/github_sync_core.py
+          curl -sL https://raw.githubusercontent.com/gptcompany/claude-config/main/scripts/roadmaptoissues.py -o .github/scripts/roadmaptoissues.py
 
       - name: Debug token
         env:
