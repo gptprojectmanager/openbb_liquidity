@@ -40,4 +40,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PROJECT_PAT }}
         run: |
           cd .github/scripts
-          python roadmaptoissues.py --roadmap ../../.planning/ROADMAP.md --no-project --sync-todos
+          # Use existing project under gptcompany org (project #14)
+          python roadmaptoissues.py --roadmap ../../.planning/ROADMAP.md --project "openbb_liquidity Development" --sync-todos
