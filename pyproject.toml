@@ -36,6 +36,7 @@ dependencies = [
     # Configuration management
     "pydantic-settings>=2.0.0",
     "psycopg2-binary>=2.9.11",
+    "pyvalet>=1.1",
 ]
 
 [project.optional-dependencies]
