@@ -478,23 +478,213 @@ async def fetch_pboc_balance_sheet() -> pd.DataFrame:
 - **BOEBSTAUKA FRED series**: Discontinued 2016, use BoE weekly report
 </sota_updates>
 
+<deep_dive>
+## Deep Dive: Implementation Details
+
+### PBoC Scraping Strategy
+
+**Official Source:** http://www.pbc.gov.cn/en/3688247/3688975/3718249/4503799/index.html
+
+**Data Format Options:**
+- HTM (HTML table) - easiest to parse
+- XLS (Excel) - structured, use openpyxl
+- PDF - avoid, too fragile
+
+**Scraping Approach:**
+```python
+# PBoC provides direct download links for HTM/XLS
+# URL pattern: /diaochatongjisi/fileDir/resource/cms/{year}/{month}/{filename}.htm
+
+async def fetch_pboc():
+    # 1. Fetch index page to find latest report link
+    # 2. Download HTM file directly
+    # 3. Use pandas.read_html() for table extraction
+    url = "http://www.pbc.gov.cn/en/3688247/3688975/3718249/4503799/index.html"
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url)
+        soup = BeautifulSoup(resp.text, 'lxml')
+        # Find link ending in .htm for balance sheet
+        links = soup.find_all('a', href=lambda x: x and x.endswith('.htm'))
+
+    # Download the HTM file
+    htm_resp = await client.get(htm_url)
+    tables = pd.read_html(htm_resp.text)
+    # Find table with "Total Assets" row
+```
+
+**Fallback Options:**
+1. **Trading Economics API** - $19.99/mo developer tier
+2. **CEIC Data** - Enterprise pricing, comprehensive
+3. **MacroMicro** - Free charts, limited API
+4. **TRESEGCNM052N (FRED)** - China foreign reserves as proxy (Apps Script approach)
+
+**Data Lag:** ~30-45 days from month-end
+
+---
+
+### BoE Database Access
+
+**CSV Download Endpoint:**
+```
+https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp?csv.x=yes
+```
+
+**Required Parameters:**
+| Parameter | Format | Example |
+|-----------|--------|---------|
+| Datefrom | DD/MON/YYYY | 01/Jan/2020 |
+| Dateto | DD/MON/YYYY or "now" | now |
+| SeriesCodes | Comma-separated | RPQB3YQ,RPQB4FL |
+| UsingCodes | Y/N | Y |
+| CSVF | Format code | TN |
+
+**CSVF Format Codes:**
+- TT = Tabular with Titles
+- TN = Tabular without Titles
+- CT = Columnar with Titles
+- CN = Columnar without Titles
+
+**Example Download URL:**
+```
+https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp?csv.x=yes&Datefrom=01/Jan/2020&Dateto=now&SeriesCodes=RPQB3YQ&UsingCodes=Y&CSVF=TN
+```
+
+**Finding Total Assets Series:**
+1. Use BoE database search for "total assets" or "balance sheet"
+2. Weekly report series have RPQB prefix
+3. Series codes are 7 characters: 3-letter prefix + 4-digit ID
+
+**Python Implementation:**
+```python
+class BOECollector(BaseCollector[pd.DataFrame]):
+    BASE_URL = "https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp"
+
+    async def collect(self, series_codes: list[str]) -> pd.DataFrame:
+        params = {
+            "csv.x": "yes",
+            "Datefrom": "01/Jan/2020",
+            "Dateto": "now",
+            "SeriesCodes": ",".join(series_codes),
+            "UsingCodes": "Y",
+            "CSVF": "TN",
+        }
+
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(self.BASE_URL, params=params)
+            df = pd.read_csv(io.StringIO(resp.text))
+            return self._normalize(df)
+```
+
+---
+
+### SNB Data Access
+
+**Primary Source:** Nasdaq Data Link (formerly Quandl)
+- Dataset: SNB/SNBBIPO (Swiss National Bank Balance Sheet Items)
+- API: `data.nasdaq.com/api/v3/datasets/SNB/SNBBIPO`
+
+**FRED Alternative:**
+- SNBREMBALPOS and related series (partial coverage)
+- 10 series available with SNB + Balance Sheet tags
+
+**SNB Data Portal:**
+- URL: https://data.snb.ch/en/publishingSet/C (Balance Sheet Items)
+- Download formats: CSV, Excel
+- No documented REST API
+
+**Total Assets (CEIC reference):**
+- Value: 866,578.166 CHF mn (March 2025)
+- Update: Monthly
+
+**Python Implementation:**
+```python
+# Option 1: Nasdaq Data Link (recommended)
+import nasdaqdatalink
+nasdaqdatalink.ApiConfig.api_key = "YOUR_KEY"
+df = nasdaqdatalink.get("SNB/SNBBIPO")
+
+# Option 2: Direct CSV from SNB portal
+# Need to find exact URL via browser network inspection
+```
+
+---
+
+### ECB SDMX Query Patterns
+
+**ILM Dataset Structure:**
+```
+Resource ID: ILM (Internal Liquidity Management)
+Dimensions:
+  - REF_AREA: U2 (Euro area)
+  - BS_ITEM: T000000 (Total assets/liabilities)
+  - BS_COUNT_AREA: Z5 (World not allocated)
+  - DATA_TYPE: various
+```
+
+**Python Query Example:**
+```python
+import sdmx
+
+ecb = sdmx.Client("ECB")
+
+# 1. Explore dataflow structure first
+dataflow = ecb.dataflow("ILM")
+print(dataflow)
+
+# 2. Query total assets
+data_msg = ecb.data(
+    "ILM",
+    key={
+        "REF_AREA": "U2",      # Euro area
+        "BS_ITEM": "T000000",  # Total assets/liabilities
+    },
+    params={"startPeriod": "2020"}
+)
+
+# 3. Convert to pandas
+df = sdmx.to_pandas(data_msg.data[0])
+df = df.reset_index()
+```
+
+**Alternative: Direct API Call:**
+```python
+import httpx
+
+url = "https://data-api.ecb.europa.eu/service/data/ILM/W.U2.C.T000000.Z5.Z01"
+params = {"startPeriod": "2020-01", "format": "csvdata"}
+
+async with httpx.AsyncClient() as client:
+    resp = await client.get(url, params=params)
+    df = pd.read_csv(io.StringIO(resp.text))
+```
+
+**Series Key Format:**
+`ILM.W.U2.C.T000000.Z5.Z01`
+- W = Weekly frequency
+- U2 = Euro area
+- C = Eurosystem
+- T000000 = Total assets/liabilities
+- Z5 = World (not allocated geographically)
+- Z01 = All currencies combined
+</deep_dive>
+
 <open_questions>
-## Open Questions
+## Open Questions (Updated)
 
-1. **PBoC Scraping Reliability**
-   - What we know: PBoC website publishes monthly balance sheet data
-   - What's unclear: HTML structure stability, handling of Chinese language pages
-   - Recommendation: Build scraper with robust parsing tests, consider paid fallback (CEIC/Trading Economics)
+1. **PBoC HTML Stability**
+   - What we know: PBoC provides HTM/XLS downloads, can use pandas.read_html()
+   - What's unclear: How often HTML structure changes
+   - Recommendation: Build with robust parsing, add smoke tests, consider Trading Economics fallback
 
-2. **BoE Data Format**
-   - What we know: BoE publishes weekly balance sheet, FRED series discontinued
-   - What's unclear: Exact download URL and CSV format
-   - Recommendation: Research BoE database API during implementation
+2. **BoE Total Assets Series Code**
+   - What we know: CSV download API works, RPQB prefix for weekly data
+   - What's unclear: Exact series code for total assets (need to search BoE database)
+   - Recommendation: Search BoE database for "total assets" during implementation
 
-3. **SNB Total Assets Series**
-   - What we know: SNB data portal exists with CSV downloads
-   - What's unclear: Which series ID maps to total assets
-   - Recommendation: Explore SNB data portal to find exact series before implementation
+3. **SNB API Access**
+   - What we know: Nasdaq Data Link has SNBBIPO dataset
+   - What's unclear: Whether free tier is sufficient, exact column names
+   - Recommendation: Test Nasdaq Data Link free tier, fall back to CSV download
 
 4. **Unit Standardization**
    - What we know: Each CB uses different units (millions, billions, hundreds of millions)
@@ -507,21 +697,28 @@ async def fetch_pboc_balance_sheet() -> pd.DataFrame:
 
 ### Primary (HIGH confidence)
 - [ECB Data Portal API](https://data.ecb.europa.eu/help/api/overview) - Official API docs
+- [ECB SDMX Data Examples](https://data.ecb.europa.eu/help/data-examples) - Query patterns
 - [FRED ECBASSETSW](https://fred.stlouisfed.org/series/ECBASSETSW) - ECB total assets weekly
 - [FRED JPNASSETS](https://fred.stlouisfed.org/series/JPNASSETS) - BoJ total assets monthly
 - [Bank of Canada Valet API](https://www.bankofcanada.ca/valet/docs) - Official API docs
+- [BoE Database Help](https://www.bankofengland.co.uk/boeapps/database/help.asp) - CSV download format
+- [BoE Weekly Report](https://www.bankofengland.co.uk/weekly-report/balance-sheet-and-weekly-report) - Balance sheet data
 - [SNB Data Portal](https://data.snb.ch/en) - Official data portal
+- [Nasdaq Data Link SNBBIPO](https://data.nasdaq.com/data/SNB/SNBBIPO) - SNB balance sheet items
 
 ### Secondary (MEDIUM confidence)
-- [sdmx1 GitHub](https://github.com/dr-leo/pandaSDMX) - SDMX library docs
+- [sdmx1 Documentation](https://sdmx1.readthedocs.io/) - SDMX library walkthrough
+- [pandasdmx Walkthrough](https://pandasdmx.readthedocs.io/en/v1.0/walkthrough.html) - ECB SDMX examples
 - [pyvalet PyPI](https://pypi.org/project/pyvalet/) - BoC API wrapper
 - [bojpy GitHub](https://github.com/philsv/bojpy) - BoJ data wrapper
 - [fredapi PyPI](https://pypi.org/project/fredapi/) - FRED API wrapper
+- [PBoC Money and Banking Statistics](http://www.pbc.gov.cn/en/3688247/3688975/3718249/4503799/index.html) - Balance sheet HTM/XLS
+- [Trading Economics China CB](https://tradingeconomics.com/china/central-bank-balance-sheet) - PBoC fallback
 
 ### Tertiary (LOW confidence - needs validation)
-- PBoC website structure - needs verification during implementation
-- BoE weekly report format - needs verification during implementation
-- SNB total assets series ID - needs verification during implementation
+- PBoC HTML structure stability - add parsing tests
+- BoE total assets series code (RPQB prefix) - search database during implementation
+- SNB SNBBIPO column mapping - test Nasdaq Data Link API
 </sources>
 
 <metadata>
