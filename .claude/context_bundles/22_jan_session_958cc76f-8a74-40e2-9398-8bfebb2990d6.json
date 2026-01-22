@@ -684,7 +684,13 @@
       "timestamp": "2026-01-22T14:08:57.597988",
       "command": "uv run pytest tests/integration/test_global_cb_collectors.py -v -k boe --tb=short 2>&1",
       "description": "Run pytest on BoE tests after fix"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:09:08.248362",
+      "command": "uv run ruff check src/liquidity/collectors/pboc.py 2>&1",
+      "description": "Run ruff check on pboc.py"
     }
   ],
-  "last_updated": "2026-01-22T14:08:57.598026"
+  "last_updated": "2026-01-22T14:09:08.248382"
 }
