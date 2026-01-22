@@ -263,7 +263,84 @@
       "timestamp": "2026-01-22T12:45:53.674966",
       "command": "git add .planning/phases/02-global-cb-collectors/02-RESEARCH.md && git commit -m \"$(cat <<'EOF'\ndocs(02): complete phase research\n\nPhase 2: Global CB Collectors\n- Standard stack identified (sdmx1, pyvalet, bojpy)\n- Data sources mapped for all 6 CBs\n- Architecture patterns documented\n- Common pitfalls catalogued\n- Reference implementation (Apps Script v3.4.1) noted\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n)\"",
       "description": "Commit Phase 2 research"
+    },
+    {
+      "operation": "askuserquestion",
+      "timestamp": "2026-01-22T12:46:29.311719"
+    },
+    {
+      "operation": "webfetch",
+      "timestamp": "2026-01-22T12:47:26.087134",
+      "url": "http://www.pbc.gov.cn/en/3688247/3688975/3718249/4503799/index.html",
+      "prompt": "Extract the HTML structure for PBoC balance sheet data: table structure, CSS classes, data format, a..."
+    },
+    {
+      "operation": "webfetch",
+      "timestamp": "2026-01-22T12:47:26.098944",
+      "url": "https://www.bankofengland.co.uk/boeapps/database/",
+      "prompt": "Extract: how to search for balance sheet data, available series codes, download formats (CSV/Excel),..."
+    },
+    {
+      "operation": "webfetch",
+      "timestamp": "2026-01-22T12:47:26.100012",
+      "url": "https://data.snb.ch/en",
+      "prompt": "Extract: how to find total assets series, available datasets, series identifiers for balance sheet, ..."
+    },
+    {
+      "operation": "websearch",
+      "timestamp": "2026-01-22T12:47:39.355579",
+      "query": "PBoC balance sheet total assets scraping python HTML table 2026"
+    },
+    {
+      "operation": "websearch",
+      "timestamp": "2026-01-22T12:47:39.367207",
+      "query": "Bank of England balance sheet weekly report IABMB download CSV API 2026"
+    },
+    {
+      "operation": "websearch",
+      "timestamp": "2026-01-22T12:47:39.396169",
+      "query": "SNB Swiss National Bank total assets balance sheet series SNBBIPO API 2026"
+    },
+    {
+      "operation": "websearch",
+      "timestamp": "2026-01-22T12:47:39.402387",
+      "query": "ECB SDMX ILM dataset total assets T000000 python query example"
+    },
+    {
+      "operation": "webfetch",
+      "timestamp": "2026-01-22T12:48:08.695329",
+      "url": "https://data.snb.ch/en/publishingSet/C",
+      "prompt": "Extract: list of all series codes for SNB balance sheet items, specifically total assets series iden..."
+    },
+    {
+      "operation": "webfetch",
+      "timestamp": "2026-01-22T12:48:08.707232",
+      "url": "https://www.bankofengland.co.uk/boeapps/database/help.asp",
+      "prompt": "Extract: CSV download URL format, series code format, API documentation, automatic download instruct..."
+    },
+    {
+      "operation": "websearch",
+      "timestamp": "2026-01-22T12:48:18.729964",
+      "query": "\"Bank of England\" series code total assets balance sheet IABMB RPQB 2026"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T12:49:19.513617",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/phases/02-global-cb-collectors/02-RESEARCH.md",
+      "old_string": "<open_questions>\n## Open Questions\n\n1. **PBoC Scraping Reliability**\n   - What we know: PBoC website..."
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T12:49:42.287880",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/phases/02-global-cb-collectors/02-RESEARCH.md",
+      "old_string": "<sources>\n## Sources\n\n### Primary (HIGH confidence)\n- [ECB Data Portal API](https://data.ecb.europa...."
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T12:49:54.075975",
+      "command": "git add .planning/phases/02-global-cb-collectors/02-RESEARCH.md && git commit -m \"$(cat <<'EOF'\ndocs(02): add deep dive implementation details\n\n- PBoC scraping: HTM/XLS download, pandas.read_html(), fallback options\n- BoE database: CSV download API format, parameters, example URL\n- SNB access: Nasdaq Data Link SNBBIPO dataset\n- ECB SDMX: ILM dataset structure, Python query patterns\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n)\"",
+      "description": "Commit deep dive research updates"
     }
   ],
-  "last_updated": "2026-01-22T12:45:53.675002"
+  "last_updated": "2026-01-22T12:49:54.076001"
 }
