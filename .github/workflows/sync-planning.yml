@@ -38,8 +38,7 @@ jobs:
       - name: Sync to GitHub
         env:
           GH_TOKEN: ${{ secrets.GH_PROJECT_PAT }}
+          GH_PROJECT_ORG: gptcompany  # Project under gptcompany org, not repo owner
         run: |
           cd .github/scripts
-          # --no-project: Project exists under gptcompany org but script can't find cross-org
-          # Issues/milestones still sync, project linking done manually
-          python roadmaptoissues.py --roadmap ../../.planning/ROADMAP.md --no-project --sync-todos
+          python roadmaptoissues.py --roadmap ../../.planning/ROADMAP.md --auto-project --create-project --sync-todos
