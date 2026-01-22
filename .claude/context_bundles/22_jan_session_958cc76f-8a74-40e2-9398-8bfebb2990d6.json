@@ -762,7 +762,130 @@
       "operation": "read",
       "timestamp": "2026-01-22T14:10:31.923388",
       "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/fred.py"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:11:00.360915",
+      "todo_count": 10
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:11:05.902692",
+      "command": "uv run pytest tests/integration/test_global_cb_collectors.py -v --tb=short 2>&1 | head -100",
+      "description": "Run global CB collector tests"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:11:33.469301",
+      "command": "uv run ruff check src/liquidity/collectors/ 2>&1",
+      "description": "Run ruff linting on all collectors"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:11:37.948106",
+      "command": "uv run ruff check src/liquidity/collectors/ --fix 2>&1",
+      "description": "Fix ruff import sorting issues"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:11:42.028337",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/fred.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:11:50.438409",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/boc.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:11:50.451641",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/boe.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:11:50.473382",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/snb.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:11:50.482743",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/pboc.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:11:58.263456",
+      "command": "wc -l src/liquidity/collectors/*.py && echo \"---\" && for f in src/liquidity/collectors/*.py; do echo \"$f:\"; grep -cE '^\\s*(def |async def |class )' \"$f\"; done",
+      "description": "Check code complexity metrics"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:12:07.668323",
+      "todo_count": 11
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:12:44.479688",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/STATE.md",
+      "old_string": "# Project State\n\n## Project Reference\n\nSee: .planning/PROJECT.md (updated 2026-01-21)\n\n**Core value:..."
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:12:55.444803",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/ROADMAP.md",
+      "old_string": "- [x] **Phase 1: Foundation & Core Data** - Project setup, FRED API, Fed balance sheet collectors\n- ..."
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:13:06.589525",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/ROADMAP.md",
+      "old_string": "Plans:\n- [ ] 02-01: ECB SDW API collector\n- [ ] 02-02: BoJ collector (via FRED or direct API)\n- [ ] ..."
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:13:17.312987",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/ROADMAP.md",
+      "old_string": "| Phase | Plans Complete | Status | Completed |\n|-------|----------------|--------|-----------|\n| 1...."
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:13:30.774653",
+      "todo_count": 11
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:13:35.072548",
+      "command": "git status --porcelain | head -30",
+      "description": "Check git status for modified files"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:13:38.778263",
+      "command": "git status --porcelain src/ tests/ pyproject.toml",
+      "description": "Check modified source and test files"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:13:42.268084",
+      "command": "git ls-files --others --exclude-standard src/ tests/",
+      "description": "Check for new untracked files"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:13:45.942908",
+      "command": "ls -la src/liquidity/collectors/*.py",
+      "description": "List collector files with details"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:13:51.153412",
+      "command": "git diff --stat HEAD",
+      "description": "Show overall diff stats"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:13:58.031165",
+      "todo_count": 11
     }
   ],
-  "last_updated": "2026-01-22T14:10:31.923416"
+  "last_updated": "2026-01-22T14:13:58.031188"
 }

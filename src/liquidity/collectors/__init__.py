@@ -10,8 +10,8 @@ from liquidity.collectors.base import (
     CollectorError,
     CollectorFetchError,
 )
-from liquidity.collectors.boc import BOCCollector
 from liquidity.collectors.boc import SERIES_MAP as BOC_SERIES_MAP
+from liquidity.collectors.boc import BOCCollector
 from liquidity.collectors.boe import BOECollector
 from liquidity.collectors.fred import SERIES_MAP, FredCollector
 from liquidity.collectors.pboc import PBOCCollector

@@ -17,7 +17,7 @@ None
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Core Data** - Project setup, FRED API, Fed balance sheet collectors
-- [ ] **Phase 2: Global CB Collectors** - ECB, BoJ, PBoC, BoE, SNB, BoC balance sheet collectors
+- [x] **Phase 2: Global CB Collectors** - ECB, BoJ, PBoC, BoE, SNB, BoC balance sheet collectors
 - [ ] **Phase 3: Overnight Rates & FX** - SOFR, €STR, SONIA, CORRA + FX pair collectors
 - [ ] **Phase 4: Market Indicators** - Bonds, volatility (MOVE, VIX), commodities
 - [ ] **Phase 5: Capital Flows & Stress** - TIC data, ETF flows, stress indicators
@@ -50,10 +50,11 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 02-01: ECB SDW API collector
-- [ ] 02-02: BoJ collector (via FRED or direct API)
-- [ ] 02-03: PBoC collector (monthly lag, scraping)
-- [ ] 02-04: BoE, SNB, BoC collectors
+- [x] 02-01: ECB/BoJ via FRED (ECBASSETSW, JPNASSETS)
+- [x] 02-02: BoC collector (Valet API)
+- [x] 02-03: BoE collector (multi-tier fallback)
+- [x] 02-04: SNB collector (data.snb.ch CSV)
+- [x] 02-05: PBoC collector (FRED fallback)
 
 ### Phase 3: Overnight Rates & FX
 **Goal**: Overnight rate monitoring and FX collectors for carry trade signals
@@ -166,7 +167,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Core Data | 3/3 | Complete | 2026-01-21 |
-| 2. Global CB Collectors | 0/4 | Not started | - |
+| 2. Global CB Collectors | 5/5 | Complete | 2026-01-22 |
 | 3. Overnight Rates & FX | 0/3 | Not started | - |
 | 4. Market Indicators | 0/2 | Not started | - |
 | 5. Capital Flows & Stress | 0/4 | Not started | - |
