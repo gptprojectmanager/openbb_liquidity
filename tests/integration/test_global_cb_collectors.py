@@ -207,7 +207,7 @@ class TestPBOCCollector:
 
         assert not df.empty
         assert df["source"].iloc[0] == "cached_baseline"
-        assert df["stale"].iloc[0] is True
+        assert df["stale"].iloc[0] == True  # noqa: E712
         assert df["value"].iloc[0] == 47_296_970
 
     @pytest.mark.asyncio

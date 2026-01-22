@@ -690,7 +690,59 @@
       "timestamp": "2026-01-22T14:09:08.248362",
       "command": "uv run ruff check src/liquidity/collectors/pboc.py 2>&1",
       "description": "Run ruff check on pboc.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:09:12.516504",
+      "command": "uv run pytest tests/integration/test_global_cb_collectors.py -v -k pboc --tb=short 2>&1",
+      "description": "Run pytest for PBoC tests"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:09:22.767196",
+      "command": "uv run pytest tests/integration/test_global_cb_collectors.py -v --tb=short 2>&1 | tail -60",
+      "description": "Run all integration tests (may skip without API key)"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:09:23.368579",
+      "command": "uv run ruff check tests/integration/test_global_cb_collectors.py 2>&1",
+      "description": "Run ruff check on test file"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:09:33.452841",
+      "todo_count": 4
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:09:39.431606",
+      "command": "uv run python -c \"\nimport asyncio\nimport logging\nlogging.basicConfig(level=logging.INFO)\nfrom liquidity.collectors.boe import BOECollector\n\nasync def test():\n    collector = BOECollector()\n    df = await collector.collect()\n    print('\\\\n--- Result ---')\n    print(df)\n    print(f'\\\\nSource: {df[\\\"source\\\"].iloc[0]}')\n    print(f'Value: {df[\\\"value\\\"].iloc[0]:,.0f} millions GBP')\n    \nasyncio.run(test())\n\" 2>&1",
+      "description": "Run quick test to see which fallback tier succeeded"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:09:40.155158",
+      "command": "grep -n \"assert df\\[\\\"stale\\\"\\]\" /media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "description": "Find the stale assertion line"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:09:43.858005",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:09:47.781417",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "        assert df[\"stale\"].iloc[0] is True"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:09:56.628068",
+      "command": "uv run pytest tests/integration/test_global_cb_collectors.py -v --tb=short -k \"ECBCollector or BoJCollector or GlobalCBTotals or GlobalCBSeriesMapping or GlobalCBQuestDB\" 2>&1 | tail -40",
+      "description": "Run only ECB/BoJ related tests"
     }
   ],
-  "last_updated": "2026-01-22T14:09:08.248382"
+  "last_updated": "2026-01-22T14:09:56.628105"
 }
