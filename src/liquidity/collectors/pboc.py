@@ -97,11 +97,12 @@ class PBOCCollector(BaseCollector[pd.DataFrame]):
             soup = BeautifulSoup(response.text, "lxml")
 
             # Find HTM file links (balance sheet tables)
-            htm_links = [
-                a.get("href", "")
-                for a in soup.find_all("a", href=True)
-                if a.get("href", "").endswith(".htm")
-            ]
+            htm_links: list[str] = []
+            for a in soup.find_all("a", href=True):
+                if hasattr(a, "get"):
+                    href = a.get("href")
+                    if isinstance(href, str) and href.endswith(".htm"):
+                        htm_links.append(href)
 
             if not htm_links:
                 raise CollectorFetchError("No HTM files found on PBoC page")

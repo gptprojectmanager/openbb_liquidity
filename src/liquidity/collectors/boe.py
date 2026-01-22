@@ -88,11 +88,12 @@ class BOECollector(BaseCollector[pd.DataFrame]):
                 raise CollectorFetchError("No weekly report links found")
 
             # Get the latest report URL
-            latest_href = report_links[0].get("href", "")
+            first_link = report_links[0]
+            latest_href = str(first_link.get("href", ""))  # type: ignore[union-attr]
             if not latest_href.startswith("http"):
                 latest_url = f"https://www.bankofengland.co.uk{latest_href}"
             else:
-                latest_url = str(latest_href)
+                latest_url = latest_href
 
             # Fetch the latest weekly report
             report_response = await client.get(latest_url)
@@ -134,7 +135,7 @@ class BOECollector(BaseCollector[pd.DataFrame]):
                 "asset" in table_text or "sterling" in table_text
             ):
                 # Try to find numeric value
-                cells = table.find_all(["td", "th"])
+                cells = table.find_all(["td", "th"])  # type: ignore[union-attr]
                 for cell in cells:
                     cell_text = cell.get_text().strip()
                     # Look for large numbers (6+ digits, possibly with commas)

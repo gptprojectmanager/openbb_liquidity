@@ -508,7 +508,183 @@
       "timestamp": "2026-01-22T14:07:25.676838",
       "command": "uv run python -c \"from liquidity.collectors.boc import BOCCollector; print(BOCCollector)\" 2>&1",
       "description": "Test BOCCollector import"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:07:31.590515",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/boe.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:07:36.788525",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/boe.py",
+      "old_string": "            # Get the latest report URL\n            latest_href = report_links[0].get(\"href\", \"\")\n  ..."
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:07:45.514450",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/boe.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:07:46.059476",
+      "command": "cat >> tests/integration/test_global_cb_collectors.py << 'EOF'\n\n\nclass TestGlobalCBSeriesMapping:\n    \"\"\"Test that ECB/BoJ series are properly mapped in FRED collector.\"\"\"\n\n    def test_ecb_series_in_series_map(self) -> None:\n        \"\"\"Verify ECBASSETSW is in SERIES_MAP.\"\"\"\n        from liquidity.collectors.fred import SERIES_MAP\n\n        assert \"ecb_total_assets\" in SERIES_MAP\n        assert SERIES_MAP[\"ecb_total_assets\"] == \"ECBASSETSW\"\n\n    def test_boj_series_in_series_map(self) -> None:\n        \"\"\"Verify JPNASSETS is in SERIES_MAP.\"\"\"\n        from liquidity.collectors.fred import SERIES_MAP\n\n        assert \"boj_total_assets\" in SERIES_MAP\n        assert SERIES_MAP[\"boj_total_assets\"] == \"JPNASSETS\"\n\n    def test_ecb_unit_mapping(self) -> None:\n        \"\"\"Verify ECBASSETSW unit is correctly mapped.\"\"\"\n        from liquidity.collectors.fred import UNIT_MAP\n\n        assert \"ECBASSETSW\" in UNIT_MAP\n        assert UNIT_MAP[\"ECBASSETSW\"] == \"millions_eur\"\n\n    def test_boj_unit_mapping(self) -> None:\n        \"\"\"Verify JPNASSETS unit is correctly mapped (100 million JPY).\"\"\"\n        from liquidity.collectors.fred import UNIT_MAP\n\n        assert \"JPNASSETS\" in UNIT_MAP\n        assert UNIT_MAP[\"JPNASSETS\"] == \"100_millions_jpy\"\n\n\n@requires_fred_api\nclass TestECBCollector:\n    \"\"\"Integration tests for ECB total assets collection via FRED.\"\"\"\n\n    @pytest.mark.asyncio\n    async def test_fetch_ecb_assets_series(\n        self, fred_collector: FredCollector\n    ) -> None:\n        \"\"\"Test fetching ECB total assets series (ECBASSETSW).\"\"\"\n        df = await fred_collector.collect([\"ECBASSETSW\"])\n\n        # Verify DataFrame structure\n        assert not df.empty, \"DataFrame should not be empty\"\n        assert set(df.columns) == {\"timestamp\", \"series_id\", \"source\", \"value\", \"unit\"}\n\n        # Verify series is present\n        assert \"ECBASSETSW\" in df[\"series_id\"].unique()\n\n        # Verify source is 'fred'\n        assert df[\"source\"].unique().tolist() == [\"fred\"]\n\n        # Verify unit metadata\n        ecb_data = df[df[\"series_id\"] == \"ECBASSETSW\"]\n        assert ecb_data[\"unit\"].iloc[0] == \"millions_eur\"\n\n        # Verify values are reasonable\n        # ECB balance sheet ~5-10 trillion EUR = 5,000,000-10,000,000 millions\n        values = ecb_data[\"value\"]\n        assert values.min() > 1_000_000, (\n            f\"ECB assets too low: {values.min()} (expected > 1 trillion EUR)\"\n        )\n        assert values.max() < 15_000_000, (\n            f\"ECB assets too high: {values.max()} (expected < 15 trillion EUR)\"\n        )\n\n        print(f\"\\nECB Total Assets (latest): {values.iloc[-1]:,.0f} million EUR\")\n        print(f\"  = {values.iloc[-1] / 1_000_000:.2f} trillion EUR\")\n\n    @pytest.mark.asyncio\n    async def test_collect_ecb_assets_convenience_method(\n        self, fred_collector: FredCollector\n    ) -> None:\n        \"\"\"Test the collect_ecb_assets convenience method.\"\"\"\n        df = await fred_collector.collect_ecb_assets()\n\n        assert not df.empty, \"DataFrame should not be empty\"\n        assert \"ECBASSETSW\" in df[\"series_id\"].unique()\n        assert df[\"unit\"].iloc[0] == \"millions_eur\"\n\n\n@requires_fred_api\nclass TestBoJCollector:\n    \"\"\"Integration tests for BoJ total assets collection via FRED.\"\"\"\n\n    @pytest.mark.asyncio\n    async def test_fetch_boj_assets_series(\n        self, fred_collector: FredCollector\n    ) -> None:\n        \"\"\"Test fetching BoJ total assets series (JPNASSETS).\"\"\"\n        df = await fred_collector.collect([\"JPNASSETS\"])\n\n        # Verify DataFrame structure\n        assert not df.empty, \"DataFrame should not be empty\"\n        assert set(df.columns) == {\"timestamp\", \"series_id\", \"source\", \"value\", \"unit\"}\n\n        # Verify series is present\n        assert \"JPNASSETS\" in df[\"series_id\"].unique()\n\n        # Verify source is 'fred'\n        assert df[\"source\"].unique().tolist() == [\"fred\"]\n\n        # Verify unit metadata\n        boj_data = df[df[\"series_id\"] == \"JPNASSETS\"]\n        assert boj_data[\"unit\"].iloc[0] == \"100_millions_jpy\"\n\n        # Verify values are reasonable\n        # BoJ balance sheet ~700+ trillion JPY\n        # In FRED units (100 million JPY): 700 trillion = 7,000,000 units\n        values = boj_data[\"value\"]\n        assert values.min() > 3_000_000, (\n            f\"BoJ assets too low: {values.min()} (expected > 300 trillion JPY)\"\n        )\n        assert values.max() < 15_000_000, (\n            f\"BoJ assets too high: {values.max()} (expected < 1500 trillion JPY)\"\n        )\n\n        latest = values.iloc[-1]\n        print(f\"\\nBoJ Total Assets (latest): {latest:,.0f} (100 million JPY)\")\n        print(f\"  = {latest * 100 / 1_000_000:.2f} trillion JPY\")\n\n    @pytest.mark.asyncio\n    async def test_collect_boj_assets_convenience_method(\n        self, fred_collector: FredCollector\n    ) -> None:\n        \"\"\"Test the collect_boj_assets convenience method.\"\"\"\n        df = await fred_collector.collect_boj_assets()\n\n        assert not df.empty, \"DataFrame should not be empty\"\n        assert \"JPNASSETS\" in df[\"series_id\"].unique()\n        assert df[\"unit\"].iloc[0] == \"100_millions_jpy\"\n\n\n@requires_fred_api\nclass TestGlobalCBTotals:\n    \"\"\"Integration tests for combined global CB totals collection.\"\"\"\n\n    @pytest.mark.asyncio\n    async def test_collect_global_cb_totals(\n        self, fred_collector: FredCollector\n    ) -> None:\n        \"\"\"Test fetching all CB totals (Fed, ECB, BoJ).\"\"\"\n        df = await fred_collector.collect_global_cb_totals()\n\n        # Verify DataFrame structure\n        assert not df.empty, \"DataFrame should not be empty\"\n        assert set(df.columns) == {\"timestamp\", \"series_id\", \"source\", \"value\", \"unit\"}\n\n        # Verify all series are present\n        series_present = set(df[\"series_id\"].unique())\n        expected_series = {\"WALCL\", \"ECBASSETSW\", \"JPNASSETS\"}\n        assert expected_series.issubset(series_present), (\n            f\"Missing series: {expected_series - series_present}\"\n        )\n\n        # Verify unit metadata is correct for each series\n        for series_id, expected_unit in [\n            (\"WALCL\", \"millions_usd\"),\n            (\"ECBASSETSW\", \"millions_eur\"),\n            (\"JPNASSETS\", \"100_millions_jpy\"),\n        ]:\n            series_data = df[df[\"series_id\"] == series_id]\n            if not series_data.empty:\n                assert series_data[\"unit\"].iloc[0] == expected_unit, (\n                    f\"{series_id} has wrong unit: {series_data['unit'].iloc[0]}\"\n                )\n\n        print(\"\\nGlobal CB Totals fetched:\")\n        for series_id in expected_series:\n            series_data = df[df[\"series_id\"] == series_id]\n            if not series_data.empty:\n                latest = series_data[\"value\"].iloc[-1]\n                unit = series_data[\"unit\"].iloc[0]\n                print(f\"  {series_id}: {latest:,.0f} ({unit})\")\nEOF",
+      "description": "Append ECB/BoJ test classes to the test file"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:07:46.210474",
+      "command": "uv run pytest tests/integration/test_global_cb_collectors.py -v -k boc --tb=short 2>&1",
+      "description": "Run BOC integration tests"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:07:49.558125",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/boe.py",
+      "old_string": "                # Try to find numeric value\n                cells = table.find_all([\"td\", \"th\"])"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:07:50.236925",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/pboc.py"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:07:52.025458",
+      "todo_count": 5
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:07:58.607991",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/pboc.py",
+      "old_string": "    async def _collect_via_scraping(self) -> pd.DataFrame:\n        \"\"\"Tier 1: Scrape PBoC balance sh..."
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:07:59.325345",
+      "command": "uv run mypy src/liquidity/collectors/boe.py 2>&1",
+      "description": "Run mypy type check on boe.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:08:06.302878",
+      "command": "uv run mypy --no-error-summary src/liquidity/collectors/boe.py 2>&1 | grep -v \"pboc.py\"",
+      "description": "Run mypy type check on boe.py only"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:08:06.726254",
+      "command": "cat >> tests/integration/test_global_cb_collectors.py << 'EOF'\n\n\n@requires_fred_api\nclass TestGlobalCBQuestDBIntegration:\n    \"\"\"Integration tests for Global CB data with QuestDB storage.\"\"\"\n\n    @pytest.mark.asyncio\n    async def test_store_and_query_ecb_boj_data(\n        self,\n        fred_collector: FredCollector,\n        questdb_storage: QuestDBStorage,\n    ) -> None:\n        \"\"\"Test storing ECB/BoJ data in QuestDB and querying back with units preserved.\"\"\"\n        import asyncio\n\n        # Skip if QuestDB is not available\n        if not questdb_storage.health_check():\n            pytest.skip(\"QuestDB not available\")\n\n        # Create tables\n        questdb_storage.create_tables()\n\n        # Fetch ECB and BoJ data\n        df = await fred_collector.collect([\"ECBASSETSW\", \"JPNASSETS\"])\n\n        assert not df.empty, \"No data fetched from FRED\"\n\n        # Store in QuestDB\n        rows_ingested = questdb_storage.ingest_dataframe(\"raw_data\", df)\n        assert rows_ingested > 0, \"No rows ingested\"\n\n        # Wait for QuestDB to flush (ILP is async)\n        await asyncio.sleep(1)\n\n        # Query back ECB data and verify unit is preserved\n        ecb_result = questdb_storage.query(\n            \"SELECT * FROM raw_data WHERE series_id = 'ECBASSETSW' \"\n            \"ORDER BY timestamp DESC LIMIT 5\"\n        )\n\n        if ecb_result:\n            assert ecb_result[0][\"series_id\"] == \"ECBASSETSW\"\n            assert ecb_result[0][\"source\"] == \"fred\"\n            assert ecb_result[0][\"unit\"] == \"millions_eur\"\n            print(\n                f\"\\nECB data from QuestDB: {ecb_result[0]['value']:,.0f} \"\n                f\"{ecb_result[0]['unit']}\"\n            )\n\n        # Query back BoJ data and verify unit is preserved\n        boj_result = questdb_storage.query(\n            \"SELECT * FROM raw_data WHERE series_id = 'JPNASSETS' \"\n            \"ORDER BY timestamp DESC LIMIT 5\"\n        )\n\n        if boj_result:\n            assert boj_result[0][\"series_id\"] == \"JPNASSETS\"\n            assert boj_result[0][\"source\"] == \"fred\"\n            assert boj_result[0][\"unit\"] == \"100_millions_jpy\"\n            print(\n                f\"BoJ data from QuestDB: {boj_result[0]['value']:,.0f} \"\n                f\"{boj_result[0]['unit']}\"\n            )\n\n    @pytest.mark.asyncio\n    async def test_store_global_cb_totals(\n        self,\n        fred_collector: FredCollector,\n        questdb_storage: QuestDBStorage,\n    ) -> None:\n        \"\"\"Test full pipeline: fetch all CB totals, store in QuestDB, query back.\"\"\"\n        import asyncio\n\n        # Skip if QuestDB is not available\n        if not questdb_storage.health_check():\n            pytest.skip(\"QuestDB not available\")\n\n        # Create tables\n        questdb_storage.create_tables()\n\n        # Fetch all CB totals\n        df = await fred_collector.collect_global_cb_totals()\n\n        assert not df.empty, \"No data fetched from FRED\"\n\n        # Store in QuestDB\n        rows_ingested = questdb_storage.ingest_dataframe(\"raw_data\", df)\n        assert rows_ingested > 0, \"No rows ingested\"\n\n        # Wait for QuestDB to flush\n        await asyncio.sleep(1)\n\n        # Query back and verify all series are stored with correct units\n        for series_id, expected_unit in [\n            (\"WALCL\", \"millions_usd\"),\n            (\"ECBASSETSW\", \"millions_eur\"),\n            (\"JPNASSETS\", \"100_millions_jpy\"),\n        ]:\n            result = questdb_storage.query(\n                f\"SELECT * FROM raw_data WHERE series_id = '{series_id}' \"\n                \"ORDER BY timestamp DESC LIMIT 1\"\n            )\n\n            if result:\n                assert result[0][\"unit\"] == expected_unit, (\n                    f\"{series_id} unit not preserved: expected {expected_unit}, \"\n                    f\"got {result[0]['unit']}\"\n                )\n                print(f\"{series_id}: {result[0]['value']:,.0f} {result[0]['unit']}\")\nEOF",
+      "description": "Append QuestDB integration tests"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:08:07.755212",
+      "command": "uv run mypy src/liquidity/collectors/pboc.py 2>&1",
+      "description": "Run mypy type check on pboc.py"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:08:11.852564",
+      "todo_count": 5
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:08:12.188207",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/pboc.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:08:12.722757",
+      "command": "uv run pytest tests/integration/test_global_cb_collectors.py -v -k boe --tb=short 2>&1",
+      "description": "Run pytest on BoE tests"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:08:15.917031",
+      "command": "uv run ruff check src/liquidity/collectors/fred.py",
+      "description": "Run ruff linter on fred.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:08:16.097887",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/pboc.py",
+      "old_string": "from bs4 import BeautifulSoup"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:08:19.829957",
+      "command": "uv run mypy src/liquidity/collectors/fred.py",
+      "description": "Run mypy type checker on fred.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:08:23.746129",
+      "command": "uv run pytest tests/integration/test_global_cb_collectors.py -v -k \"TestBOCCollector\" --tb=short 2>&1",
+      "description": "Run only BOC tests"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:08:24.625537",
+      "command": "uv run mypy src/liquidity/collectors/fred.py --ignore-missing-imports 2>&1 | head -50",
+      "description": "Run mypy with ignore missing imports"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:08:24.891614",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/pboc.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:08:28.862114",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/pboc.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:08:33.801722",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/pboc.py",
+      "old_string": "            # Find HTM file links (balance sheet tables)\n            htm_links: list[str] = []\n     ..."
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:08:38.599281",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:08:42.461846",
+      "command": "uv run mypy src/liquidity/collectors/pboc.py 2>&1",
+      "description": "Run mypy type check on pboc.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:08:47.967416",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "    @pytest.mark.asyncio\n    async def test_boe_cached_baseline_works(self) -> None:\n        \"\"\"Test..."
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:08:52.741811",
+      "command": "uv run ruff check tests/integration/test_global_cb_collectors.py",
+      "description": "Run ruff on test file"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:08:53.843550",
+      "todo_count": 3
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:08:56.773582",
+      "command": "uv run pytest tests/integration/test_global_cb_collectors.py -v --tb=short -k \"SeriesMapping\" 2>&1 | head -80",
+      "description": "Run unit tests for series mapping (no API key needed)"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:08:57.597988",
+      "command": "uv run pytest tests/integration/test_global_cb_collectors.py -v -k boe --tb=short 2>&1",
+      "description": "Run pytest on BoE tests after fix"
     }
   ],
-  "last_updated": "2026-01-22T14:07:25.676863"
+  "last_updated": "2026-01-22T14:08:57.598026"
 }
