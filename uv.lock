@@ -634,6 +634,20 @@ wheels = [
 ]
 
 [[package]]
+name = "dbnomics"
+version = "1.2.7"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pandas" },
+    { name = "requests" },
+    { name = "tenacity" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/59/28/921d4e8c8c5d191111d9f952f1124ad7bc700b7b2c085fdbd79deac5c0d0/dbnomics-1.2.7.tar.gz", hash = "sha256:d5b754e53df16a11b286a8cdbacc1b4cf6d3461a664c0485e7ff7862d663e59a", size = 10769493, upload-time = "2025-06-18T13:55:48.624Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4a/5f/7adedbcafe6951ac4d1e96ed638f323a189e3ed94b41ce26f2c602d98171/dbnomics-1.2.7-py3-none-any.whl", hash = "sha256:7fda5b25bd0c5a7567a4a02a1bd3b1643173e21b8d433640e7179822f380b3d1", size = 32046, upload-time = "2025-06-18T13:55:46.415Z" },
+]
+
+[[package]]
 name = "deepdiff"
 version = "8.6.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1063,6 +1077,7 @@ name = "liquidity-monitor"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "dbnomics" },
     { name = "httpx" },
     { name = "openbb" },
     { name = "prometheus-client" },
@@ -1097,6 +1112,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "dbnomics", specifier = ">=1.2.7" },
     { name = "httpx", specifier = ">=0.27.0" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.10.0" },
     { name = "openbb", specifier = ">=4.0.0" },
