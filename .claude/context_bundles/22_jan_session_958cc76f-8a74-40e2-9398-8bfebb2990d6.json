@@ -502,7 +502,13 @@
       "timestamp": "2026-01-22T14:07:23.060865",
       "command": "uv run mypy src/liquidity/collectors/pboc.py 2>&1",
       "description": "Run mypy type check on pboc.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:07:25.676838",
+      "command": "uv run python -c \"from liquidity.collectors.boc import BOCCollector; print(BOCCollector)\" 2>&1",
+      "description": "Test BOCCollector import"
     }
   ],
-  "last_updated": "2026-01-22T14:07:23.060886"
+  "last_updated": "2026-01-22T14:07:25.676863"
 }
