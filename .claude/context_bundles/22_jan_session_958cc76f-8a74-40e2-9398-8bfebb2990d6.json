@@ -974,7 +974,31 @@
       "timestamp": "2026-01-22T14:24:43.178690",
       "command": "git log --oneline -5",
       "description": "Check recent commits"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:31:02.637794",
+      "command": "git push",
+      "description": "Push commits to remote"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:31:17.273286",
+      "command": "gh run list --limit 3 2>/dev/null || echo \"No gh CLI or no runs\"",
+      "description": "Check GitHub Actions CI status"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:31:23.067464",
+      "command": "gh run view 21252193379 --log-failed 2>/dev/null | head -50",
+      "description": "Check failed CI run logs"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:31:32.015726",
+      "command": "gh run list --limit 1",
+      "description": "Check latest CI status"
     }
   ],
-  "last_updated": "2026-01-22T14:24:43.178718"
+  "last_updated": "2026-01-22T14:31:32.015747"
 }
