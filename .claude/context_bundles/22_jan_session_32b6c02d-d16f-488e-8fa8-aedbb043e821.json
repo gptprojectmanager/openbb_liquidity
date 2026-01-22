@@ -180,7 +180,282 @@
       "timestamp": "2026-01-22T13:15:06.808973",
       "command": "git add .planning/phases/02-global-cb-collectors/02-*.md pyproject.toml uv.lock && git commit -m \"$(cat <<'EOF'\ndocs(02): update plans with discovery sprint findings\n\nDiscovery results incorporated into all 5 Phase 2 plans:\n\n- 02-01 (FRED ECB/BoJ): JPNASSETS units corrected to \"100 Million Yen\"\n- 02-02 (BoC): Series V36610 discovered for Total Assets via Valet API\n- 02-03 (BoE): Rewritten for HTML scraping (database API returns 403)\n- 02-04 (SNB): T0 code confirmed for Total Assets, CSV structure documented\n- 02-05 (PBoC): URL verified working with 27 HTM/XLS download links\n\nAdded pyvalet>=1.1 dependency for BoC Valet API access.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n)\"",
       "description": "Commit plan updates with discovery findings"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T13:16:19.620252",
+      "todo_count": 3
+    },
+    {
+      "operation": "websearch",
+      "timestamp": "2026-01-22T13:16:19.946126",
+      "query": "Bank of England balance sheet data API SDW statistical data warehouse 2024"
+    },
+    {
+      "operation": "websearch",
+      "timestamp": "2026-01-22T13:16:19.994438",
+      "query": "People's Bank of China PBOC balance sheet data API IMF BIS 2024"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:16:48.225933",
+      "command": "curl -sI \"https://www.bankofengland.co.uk/-/media/boe/files/statistics/research-datasets/annual-data-on-the-boes-balance-sheet.xlsx\" | head -15",
+      "description": "Check BoE Excel dataset availability"
+    },
+    {
+      "operation": "websearch",
+      "timestamp": "2026-01-22T13:16:49.131125",
+      "query": "IMF IFS International Financial Statistics API central bank balance sheet 2024"
+    },
+    {
+      "operation": "webfetch",
+      "timestamp": "2026-01-22T13:17:15.110855",
+      "url": "https://db.nomics.world/IMF/IFS",
+      "prompt": "How do I access central bank balance sheet data via this API? What is the API endpoint format? Are t..."
+    },
+    {
+      "operation": "websearch",
+      "timestamp": "2026-01-22T13:17:15.119595",
+      "query": "DBnomics Python API central bank total assets FAMA_XDC_USD"
+    },
+    {
+      "operation": "websearch",
+      "timestamp": "2026-01-22T13:18:20.664265",
+      "query": "site:github.com central bank balance sheet data python IMF BIS"
+    },
+    {
+      "operation": "websearch",
+      "timestamp": "2026-01-22T13:18:20.676220",
+      "query": "site:github.com Bank of England API python data"
+    },
+    {
+      "operation": "webfetch",
+      "timestamp": "2026-01-22T13:18:46.394613",
+      "url": "https://github.com/jzuccollo/pyscraper",
+      "prompt": "Show me the code for from_BoE function. What series codes does it use? How does it access the Bank o..."
+    },
+    {
+      "operation": "webfetch",
+      "timestamp": "2026-01-22T13:18:46.396263",
+      "url": "https://github.com/chriscarrollsmith/imfp",
+      "prompt": "What IMF datasets does this package support? Does it have IFS (International Financial Statistics) s..."
+    },
+    {
+      "operation": "webfetch",
+      "timestamp": "2026-01-22T13:19:00.452970",
+      "url": "https://raw.githubusercontent.com/jzuccollo/pyscraper/master/pyscraper/boe.py",
+      "prompt": "Show me the full code. How does it access the Bank of England database? What URL pattern does it use..."
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:19:01.025372",
+      "command": "uv run pip install imfp dbnomics --quiet 2>/dev/null && uv run python -c \"\nimport imfp\n# List all available databases\ndbs = imfp.imf_databases()\n# Search for IFS or financial statistics\nprint('IMF Databases with balance/financial:')\nfor _, row in dbs.iterrows():\n    name = str(row.get('description', '')).lower()\n    db_id = row.get('database_id', '')\n    if any(x in name for x in ['financial', 'balance', 'monetary', 'bank']):\n        print(f'  {db_id}: {row.get(\\\"description\\\", \\\"\\\")}')\n\" 2>&1 | head -30",
+      "description": "Install imfp and list relevant IMF databases"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:19:20.430860",
+      "command": "uv run python -c \"\nimport imfp\n# List all available databases\ndbs = imfp.imf_databases()\nprint('All IMF Databases:')\nfor _, row in dbs.iterrows():\n    print(f'  {row.get(\\\"database_id\\\", \\\"\\\")}: {row.get(\\\"description\\\", \\\"\\\")}')\n\" 2>&1 | head -40",
+      "description": "List all IMF databases via imfp"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:19:26.645355",
+      "command": "uv run python -c \"\nimport dbnomics\n# Fetch IMF IFS data for a sample series\nprint('Testing DBnomics for central bank data...')\ntry:\n    # Try to get UK central bank balance sheet\n    df = dbnomics.fetch_series('IMF/IFS/M.GB.FAMA_XDC')\n    print(f'Found {len(df)} rows')\n    print(df.tail())\nexcept Exception as e:\n    print(f'Error: {e}')\n\" 2>&1",
+      "description": "Test DBnomics for central bank data"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:19:32.560532",
+      "command": "uv add dbnomics --quiet 2>&1 && uv run python -c \"\nimport dbnomics\nprint('DBnomics installed successfully')\n# Search for central bank datasets\ndf = dbnomics.fetch_series_by_api_link('https://api.db.nomics.world/v22/series?provider_code=IMF&dataset_code=IFS&dimensions=%7B%22INDICATOR%22%3A%5B%22FAMA_XDC%22%5D%7D&limit=10')\nprint(f'Found series: {len(df)}')\nprint(df[['provider_code', 'dataset_code', 'series_code']].head())\n\" 2>&1",
+      "description": "Install dbnomics and search for central bank data"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:19:43.992501",
+      "command": "uv run python -c \"\nimport dbnomics\n\n# Search for central bank balance sheet data\nprint('Searching DBnomics for central bank data...')\ntry:\n    # Search by text\n    df = dbnomics.fetch_series(\n        provider_code='IMF',\n        dataset_code='IFS',\n        series_code='M.CN.FAMA_XDC'  # China monetary authority assets\n    )\n    print(f'China: {len(df)} rows')\n    print(df[['period', 'value']].tail())\nexcept Exception as e:\n    print(f'China error: {e}')\n\ntry:\n    # UK monetary authority\n    df = dbnomics.fetch_series(\n        provider_code='IMF',\n        dataset_code='IFS',\n        series_code='M.GB.FAMA_XDC'  # UK monetary authority assets\n    )\n    print(f'UK: {len(df)} rows')\nexcept Exception as e:\n    print(f'UK error: {e}')\n\" 2>&1",
+      "description": "Search DBnomics for specific central bank series"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:19:55.747452",
+      "command": "curl -s \"https://api.db.nomics.world/v22/series?provider_code=IMF&dataset_code=IFS&q=monetary%20authority%20total%20assets&limit=5\" | uv run python -c \"\nimport sys, json\ndata = json.load(sys.stdin)\nprint(f'Total found: {data.get(\\\"series\\\", {}).get(\\\"num_found\\\", 0)}')\nfor s in data.get('series', {}).get('docs', [])[:5]:\n    print(f'  {s.get(\\\"series_code\\\")}: {s.get(\\\"series_name\\\")}')\n\"",
+      "description": "Search DBnomics API directly for monetary authority assets"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:20:01.489366",
+      "command": "curl -s \"http://dataservices.imf.org/REST/SDMX_JSON.svc/CompactData/IFS/M.CN+GB.FAMA_XDC?startPeriod=2020&endPeriod=2024\" | uv run python -c \"\nimport sys, json\ndata = json.load(sys.stdin)\nprint('IMF IFS API Response:')\nprint(json.dumps(data, indent=2)[:2000])\n\"",
+      "description": "Test direct IMF IFS API for central bank data"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:20:06.985588",
+      "command": "curl -sI \"http://dataservices.imf.org/REST/SDMX_JSON.svc/CompactData/IFS/M.CN.FAMA_XDC\" | head -10",
+      "description": "Check IMF API response headers"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:20:07.606463",
+      "command": "curl -s \"http://dataservices.imf.org/REST/SDMX_JSON.svc/Dataflow\" | head -500",
+      "description": "List available IMF dataflows"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:20:21.540526",
+      "command": "curl -sL \"https://www.bankofengland.co.uk/boeapps/database/fromshowcolumns.asp?Travel=NIxAZxSUx&FromSeries=1&ToSeries=50&DAT=RNG&FD=1&FM=Jan&FY=2024&TD=31&TM=Dec&TY=2025&FNY=Y&CSVF=TT&csv.x=yes\" \\\n  -H \"User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\" \\\n  -H \"Accept: text/csv,*/*\" \\\n  -w \"\\nHTTP: %{http_code}\\n\" -o /tmp/boe_test2.csv && head -30 /tmp/boe_test2.csv",
+      "description": "Test BoE IADB with browser-like headers"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:20:30.250010",
+      "command": "uv run python -c \"\nfrom openbb import obb\n# Check available economy providers\nimport inspect\nprint('OpenBB economy functions:')\nfuncs = [m for m in dir(obb.economy) if not m.startswith('_')]\nfor f in funcs[:30]:\n    print(f'  {f}')\n\"",
+      "description": "Check OpenBB economy functions for central bank data"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:20:48.284029",
+      "command": "uv run python -c \"\nfrom openbb import obb\nhelp(obb.economy.central_bank_holdings)\n\" 2>&1 | head -60",
+      "description": "Check OpenBB central_bank_holdings function"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T13:21:17.242739",
+      "todo_count": 3
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:21:17.513393",
+      "command": "uv run python -c \"\nfrom openbb import obb\nimport os\n\n# Set FRED key if available\n# Try FRED search for UK monetary data\ntry:\n    result = obb.economy.fred_search('united kingdom money supply M4', provider='fred')\n    print('UK Money Supply series on FRED:')\n    for r in result.results[:10]:\n        print(f'  {r.symbol}: {r.title} ({r.frequency})')\nexcept Exception as e:\n    print(f'FRED search error: {e}')\n\" 2>&1",
+      "description": "Search FRED for UK monetary proxy series"
+    },
+    {
+      "operation": "websearch",
+      "timestamp": "2026-01-22T13:21:36.751585",
+      "query": "FRED series UK money supply M4 broad money MABMM401GBM"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:21:36.768184",
+      "command": "cat /media/sam/1TB/openbb_liquidity/.env.example | grep -i fred",
+      "description": "Check FRED key in env example"
+    },
+    {
+      "operation": "webfetch",
+      "timestamp": "2026-01-22T13:22:05.024529",
+      "url": "https://fred.stlouisfed.org/series/MBM0UKM",
+      "prompt": "What is the latest value? What date is it from? What is the source? Is this data still being updated..."
+    },
+    {
+      "operation": "websearch",
+      "timestamp": "2026-01-22T13:22:05.044700",
+      "query": "Bank of England XML RSS feed balance sheet data automatic download"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:22:34.186330",
+      "command": "curl -s \"https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp?CodeVer=new&xml.x=yes&Datefrom=01/Jan/2024&Dateto=now&SeriesCodes=RPWB75A&VPD=N\" \\\n  -H \"User-Agent: Mozilla/5.0\" \\\n  -w \"\\nHTTP: %{http_code}\\n\" -o /tmp/boe_xml.xml && head -50 /tmp/boe_xml.xml",
+      "description": "Test BoE XML API endpoint"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:22:41.665816",
+      "command": "curl -s \"https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp?CodeVer=new&xml.x=yes&Datefrom=01/Jan/2024&Dateto=now&SeriesCodes=all\" \\\n  -H \"User-Agent: Mozilla/5.0\" \\\n  -o /tmp/boe_all.xml && grep -i \"assets.*total\\|total.*assets\" /tmp/boe_all.xml | head -20",
+      "description": "Search BoE XML API for total assets series"
+    },
+    {
+      "operation": "webfetch",
+      "timestamp": "2026-01-22T13:22:49.957950",
+      "url": "https://www.bankofengland.co.uk/statistics/details/further-details-about-the-bank-of-england-weekly-report-and-consolidated-balance-sheet-data",
+      "prompt": "What are the series codes for total assets in the weekly report? List all series codes mentioned for..."
+    },
+    {
+      "operation": "websearch",
+      "timestamp": "2026-01-22T13:22:59.318980",
+      "query": "\"Bank of England\" database series code \"RPMB\" OR \"RPWM\" total assets weekly 2024"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:23:20.098741",
+      "command": "curl -s \"https://www.bankofengland.co.uk/boeapps/database/FromShowColumns.asp?Travel=NIxAZxI3x&FromCategoryList=Yes&NewMeaningId=ACRTOT,ATOTAL,ATOTL,AFCAS&CategId=6&HighlightCatValueDisplay=Assets+-+total\" \\\n  -H \"User-Agent: Mozilla/5.0\" | grep -oP 'SCODE=\"[^\"]+\"|scode=[^&]+' | head -30",
+      "description": "Extract BoE series codes for Assets total"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:23:26.220460",
+      "command": "curl -sL \"https://www.bankofengland.co.uk/boeapps/database/FromShowColumns.asp?Travel=NIxAZxI3x&FromCategoryList=Yes&NewMeaningId=ATOTAL&CategId=6\" \\\n  -H \"User-Agent: Mozilla/5.0\" -o /tmp/boe_series.html && grep -oP 'value=\"[A-Z0-9]{6,12}\"' /tmp/boe_series.html | sort -u | head -20",
+      "description": "Extract series codes from BoE assets page"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:23:31.682030",
+      "command": "curl -sL \"https://www.bankofengland.co.uk/boeapps/database/FromShowColumns.asp?Travel=NIxAZxI3x&FromCategoryList=Yes&NewMeaningId=ATOTAL&CategId=6\" \\\n  -H \"User-Agent: Mozilla/5.0\" | grep -i \"checkbox\\|series\" | head -30",
+      "description": "Look for checkbox/series patterns in BoE page"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T13:23:39.938216",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/phases/02-global-cb-collectors/02-RESEARCH.md"
+    },
+    {
+      "operation": "write",
+      "timestamp": "2026-01-22T13:24:21.466358",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/phases/02-global-cb-collectors/02-ROBUST-STRATEGIES.md",
+      "content_length": 5865
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T13:24:42.470474",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/phases/02-global-cb-collectors/02-03-PLAN.md",
+      "old_string": "<objective>\nCreate Bank of England collector via weekly report scraping.\n\nPurpose: FRED series BOEBS..."
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T13:25:11.492732",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/phases/02-global-cb-collectors/02-03-PLAN.md",
+      "old_string": "class BOECollector(BaseCollector[pd.DataFrame]):\n    \"\"\"Bank of England collector via weekly report ..."
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T13:25:24.434423",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/phases/02-global-cb-collectors/02-03-PLAN.md",
+      "old_string": "<success_criteria>\n\n- BOECollector class follows BaseCollector pattern\n- Weekly report scraping work..."
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T13:25:41.621582",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/phases/02-global-cb-collectors/02-05-PLAN.md",
+      "old_string": "<objective>\nCreate People's Bank of China collector with scraping and FRED fallback.\n\nPurpose: PBoC ..."
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T13:25:59.503074",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/phases/02-global-cb-collectors/02-05-PLAN.md",
+      "old_string": "class PBOCCollector(BaseCollector[pd.DataFrame]):\n    \"\"\"PBoC collector with scraping and FRED fallb..."
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T13:26:10.326195",
+      "file_path": "/media/sam/1TB/openbb_liquidity/.planning/phases/02-global-cb-collectors/02-05-PLAN.md",
+      "old_string": "<success_criteria>\n\n- beautifulsoup4 and lxml dependencies added\n- PBOCCollector class follows BaseC..."
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T13:26:20.696784",
+      "todo_count": 3
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:26:24.680712",
+      "command": "git add .planning/phases/02-global-cb-collectors/ && git status --short",
+      "description": "Stage planning files and check status"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T13:26:34.784525",
+      "command": "git add pyproject.toml uv.lock && git commit -m \"$(cat <<'EOF'\ndocs(02): add ROBUST multi-tier fallback strategies for BoE and PBoC\n\nProblem: BoE and PBoC collectors relied on fragile HTML scraping as\nprimary data source with no guaranteed fallback.\n\nSolution: Implemented multi-tier fallback architecture:\n\n**BoE (02-03)**:\n- Tier 1: Scrape weekly report HTML\n- Tier 2: FRED UK M4 as correlation proxy\n- Tier 3: Cached baseline with stale flag (GUARANTEED)\n\n**PBoC (02-05)**:\n- Tier 1: Scrape PBoC website\n- Tier 2: FRED TRESEGCNM052N (RELIABLE - same as Apps Script v3.4.1)\n- Tier 3: Cached baseline with stale flag (GUARANTEED)\n\nKey insight: PBoC was already robust (FRED fallback is proven in\nproduction Apps Script). BoE needed the most work due to discontinued\nFRED series and blocked database API.\n\nAdded 02-ROBUST-STRATEGIES.md documenting the architecture.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n)\"",
+      "description": "Commit robust fallback strategies"
     }
   ],
-  "last_updated": "2026-01-22T13:15:06.808993"
+  "last_updated": "2026-01-22T13:26:34.784551"
 }
