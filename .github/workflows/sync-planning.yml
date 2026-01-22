@@ -40,5 +40,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PROJECT_PAT }}
         run: |
           cd .github/scripts
-          # Use existing project under gptcompany org (project #14)
-          python roadmaptoissues.py --roadmap ../../.planning/ROADMAP.md --project "openbb_liquidity Development" --sync-todos
+          # --no-project: Project exists under gptcompany org but script can't find cross-org
+          # Issues/milestones still sync, project linking done manually
+          python roadmaptoissues.py --roadmap ../../.planning/ROADMAP.md --no-project --sync-todos
