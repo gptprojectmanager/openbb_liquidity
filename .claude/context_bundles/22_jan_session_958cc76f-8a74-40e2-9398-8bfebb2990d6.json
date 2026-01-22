@@ -1,0 +1,508 @@
+{
+  "session_id": "958cc76f-8a74-40e2-9398-8bfebb2990d6",
+  "created_at": "2026-01-22T14:04:29.155325",
+  "operations": [
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:04:29.155352",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/__init__.py"
+    },
+    {
+      "operation": "glob",
+      "timestamp": "2026-01-22T14:04:30.165921",
+      "pattern": "tests/integration/test_global_cb*.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:04:32.340783",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/__init__.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:04:33.189413",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/__init__.py",
+      "old_string": "from liquidity.collectors.boc import BOCCollector\nfrom liquidity.collectors.boc import SERIES_MAP as..."
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:04:33.553025",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:04:38.533740",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "\"\"\"Integration tests for Global Central Bank collectors.\n\nThese tests require network access to exte..."
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:04:39.579140",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/__init__.py"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:04:40.431987",
+      "todo_count": 6
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:04:42.612156",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/__init__.py",
+      "old_string": "    # SNB\n    \"SNBCollector\",\n]"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:04:44.825559",
+      "command": "uv run ruff check src/liquidity/collectors/snb.py",
+      "description": "Run ruff check on snb.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:04:45.642577",
+      "command": "uv run mypy src/liquidity/collectors/snb.py",
+      "description": "Run mypy on snb.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:04:46.581060",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/__init__.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:04:47.187970",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "glob",
+      "timestamp": "2026-01-22T14:04:48.917471",
+      "pattern": "tests/integration/test_global_cb_collectors.py",
+      "path": "/media/sam/1TB/openbb_liquidity"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:04:50.712544",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/__init__.py",
+      "old_string": "from liquidity.collectors.boe import BOECollector\nfrom liquidity.collectors.fred import SERIES_MAP, ..."
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:04:51.620961",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "import pytest\n\nfrom liquidity.collectors.snb import SNBCollector"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:04:52.253473",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:04:52.966902",
+      "todo_count": 4
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:04:55.925013",
+      "command": "uv run mypy src/liquidity/collectors/snb.py --ignore-missing-imports 2>&1 | grep -E \"^src/liquidity/collectors/snb.py|error|warning\" || echo \"No errors in snb.py\"",
+      "description": "Run mypy on snb.py only"
+    },
+    {
+      "operation": "glob",
+      "timestamp": "2026-01-22T14:04:56.707407",
+      "pattern": "tests/integration/*.py",
+      "path": "/media/sam/1TB/openbb_liquidity"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:04:59.777286",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:05:00.284304",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/__init__.py",
+      "old_string": "    # SNB\n    \"SNBCollector\",\n    # BoE\n    \"BOECollector\",\n]"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:05:01.444325",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "\"\"\"Integration tests for Global Central Bank collectors.\n\nThese tests require network access to exte..."
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:06.660618",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:07.302178",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:05:10.669414",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "from liquidity.collectors.fred import FredCollector\nfrom liquidity.collectors.snb import SNBCollecto..."
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:10.861297",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:05:12.507897",
+      "todo_count": 5
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:14.656031",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "glob",
+      "timestamp": "2026-01-22T14:05:15.838215",
+      "pattern": "tests/integration/*.py",
+      "path": "/media/sam/1TB/openbb_liquidity"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:19.355838",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:19.499553",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:20.023259",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:05:23.995164",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "from liquidity.collectors.fred import FredCollector\nfrom liquidity.collectors.snb import SNBCollecto..."
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:05:24.129822",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "from liquidity.collectors.fred import FredCollector\nfrom liquidity.collectors.snb import SNBCollecto..."
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:05:25.772856",
+      "command": "uv run python -c \"import sys; sys.path.insert(0, 'src'); from liquidity.collectors.snb import SNBCollector; print('Import successful')\"",
+      "description": "Verify SNB collector import works"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:27.309065",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:27.791291",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:28.584654",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:05:31.073281",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "from liquidity.collectors.fred import FredCollector\nfrom liquidity.collectors.snb import SNBCollecto..."
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:33.162607",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:05:37.514140",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "from liquidity.collectors.fred import FredCollector\nfrom liquidity.collectors.snb import SNBCollecto..."
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:39.672965",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:41.273387",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:05:44.645602",
+      "todo_count": 6
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:05:44.997934",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "from liquidity.collectors.fred import FredCollector\nfrom liquidity.collectors.snb import SNBCollecto..."
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:05:47.279401",
+      "command": "uv run ruff check src/liquidity/collectors/boe.py --fix 2>&1 || true",
+      "description": "Run ruff check on the new boe.py file"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:05:48.579550",
+      "command": "uv run pytest tests/integration/test_global_cb_collectors.py -v -k snb --tb=short",
+      "description": "Run pytest for SNB tests"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:05:51.451139",
+      "command": "cat tests/integration/test_global_cb_collectors.py | wc -l",
+      "description": "Check line count of test file"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:51.944053",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:53.471215",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:55.097741",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:05:58.898227",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:06:02.051497",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "    @pytest.mark.asyncio\n    async def test_snb_collector_registered(self) -> None:\n        \"\"\"Test ..."
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:06:08.675356",
+      "command": "cat /media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "description": "Read the test file to see current contents"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:06:11.063124",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:06:12.015095",
+      "todo_count": 3
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:06:12.324915",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:06:15.256696",
+      "command": "curl -s \"https://data.snb.ch/api/cube/snbbipo/data/csv/en\" | head -30",
+      "description": "Fetch and examine first 30 lines of SNB CSV"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:06:16.233583",
+      "command": "uv run ruff check src/liquidity/collectors/boc.py",
+      "description": "Run ruff linter on BOC collector"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:06:16.414750",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "from liquidity.collectors.fred import FredCollector\nfrom liquidity.collectors.snb import SNBCollecto..."
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:06:17.188485",
+      "command": "uv run mypy src/liquidity/collectors/boc.py",
+      "description": "Run mypy type check on BOC collector"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:06:20.103028",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/snb.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:06:20.959066",
+      "command": "cat /media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "description": "View current file contents"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:06:21.607694",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:06:25.073177",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:06:25.493743",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:06:28.430898",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/snb.py",
+      "old_string": "    def _parse_csv(\n        self,\n        csv_text: str,\n        start_date: datetime | None,\n      ..."
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:06:30.306219",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "from liquidity.collectors.fred import FredCollector\nfrom liquidity.collectors.snb import SNBCollecto..."
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:06:33.513772",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:06:38.260643",
+      "command": "uv run pytest tests/integration/test_global_cb_collectors.py -v -k snb --tb=short 2>&1 | tail -50",
+      "description": "Run pytest for SNB tests after fix"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:06:38.935371",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:06:41.303194",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "old_string": "    @pytest.mark.asyncio\n    async def test_boc_collector_registered(self) -> None:\n        \"\"\"Test ..."
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:06:49.871601",
+      "command": "uv run mypy src/liquidity/collectors/boc.py --ignore-missing-imports 2>&1",
+      "description": "Run mypy on BOC collector with ignore missing imports"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:06:52.088851",
+      "todo_count": 4
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:06:53.954262",
+      "command": "cat /media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "description": "Get current file state"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:06:56.514277",
+      "command": "uv run ruff check src/liquidity/collectors/boe.py",
+      "description": "Run ruff check on boe.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:06:57.366823",
+      "command": "uv run mypy src/liquidity/collectors/boe.py",
+      "description": "Run mypy type check on boe.py"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:06:57.926120",
+      "file_path": "/media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:06:59.335172",
+      "command": "cat /media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py",
+      "description": "Read the test file using bash"
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:07:03.277949",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/boe.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:07:04.531056",
+      "command": "uv run ruff check src/liquidity/collectors/snb.py",
+      "description": "Run ruff check on updated snb.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:07:07.546295",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/boe.py",
+      "old_string": "import httpx\nimport pandas as pd\nfrom bs4 import BeautifulSoup\n\nfrom liquidity.collectors.base impor..."
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:07:07.765487",
+      "command": "cat >> /media/sam/1TB/openbb_liquidity/tests/integration/test_global_cb_collectors.py << 'EOF'\n\n\nclass TestPBOCCollector:\n    \"\"\"Tests for People's Bank of China collector.\"\"\"\n\n    @pytest.mark.asyncio\n    async def test_pboc_collect_with_fallback(self) -> None:\n        \"\"\"Test PBoC collection (scraping or FRED fallback).\"\"\"\n        from liquidity.collectors.pboc import PBOCCollector\n\n        collector = PBOCCollector(use_fred_fallback=True)\n        df = await collector.collect()\n\n        # Should ALWAYS return data due to fallback chain\n        assert not df.empty\n        assert \"timestamp\" in df.columns\n        assert \"value\" in df.columns\n\n    @pytest.mark.asyncio\n    @pytest.mark.skipif(\n        not os.environ.get(\"LIQUIDITY_FRED_API_KEY\"),\n        reason=\"LIQUIDITY_FRED_API_KEY not set\",\n    )\n    async def test_pboc_fred_fallback_works(self) -> None:\n        \"\"\"Test FRED fallback explicitly.\"\"\"\n        from liquidity.collectors.pboc import PBOCCollector\n\n        collector = PBOCCollector(use_fred_fallback=True)\n        df = await collector._collect_via_fred(None, None)\n\n        assert not df.empty\n        assert df[\"series_id\"].iloc[0] == \"CHINA_FOREIGN_RESERVES\"\n        assert df[\"source\"].iloc[0] == \"fred_proxy\"\n\n    @pytest.mark.asyncio\n    async def test_pboc_cached_baseline_works(self) -> None:\n        \"\"\"Test that cached baseline returns valid data.\"\"\"\n        from liquidity.collectors.pboc import PBOCCollector\n\n        collector = PBOCCollector()\n        df = collector._get_cached_baseline()\n\n        assert not df.empty\n        assert df[\"source\"].iloc[0] == \"cached_baseline\"\n        assert df[\"stale\"].iloc[0] is True\n        assert df[\"value\"].iloc[0] == 47_296_970\n\n    @pytest.mark.asyncio\n    async def test_pboc_collector_registered(self) -> None:\n        \"\"\"Test that PBoC collector is registered.\"\"\"\n        from liquidity.collectors import registry\n\n        assert \"pboc\" in registry.list_collectors()\nEOF",
+      "description": "Append PBoC tests to test file"
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:07:09.781696",
+      "todo_count": 6
+    },
+    {
+      "operation": "todowrite",
+      "timestamp": "2026-01-22T14:07:14.373822",
+      "todo_count": 5
+    },
+    {
+      "operation": "read",
+      "timestamp": "2026-01-22T14:07:16.267772",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/boe.py"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:07:17.879614",
+      "command": "uv run mypy src/liquidity/collectors/boc.py --follow-imports=skip 2>&1 | grep -v \"^src/liquidity/collectors/pboc\\|^src/liquidity/collectors/boe\" | head -30",
+      "description": "Run mypy on BOC collector skipping imports"
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:07:18.627328",
+      "command": "uv run ruff check src/liquidity/collectors/pboc.py 2>&1",
+      "description": "Run ruff check on pboc.py"
+    },
+    {
+      "operation": "edit",
+      "timestamp": "2026-01-22T14:07:21.993689",
+      "file_path": "/media/sam/1TB/openbb_liquidity/src/liquidity/collectors/boe.py",
+      "old_string": "import httpx\nimport pandas as pd\nfrom bs4 import BeautifulSoup\n\nfrom liquidity.collectors.base impor..."
+    },
+    {
+      "operation": "bash",
+      "timestamp": "2026-01-22T14:07:23.060865",
+      "command": "uv run mypy src/liquidity/collectors/pboc.py 2>&1",
+      "description": "Run mypy type check on pboc.py"
+    }
+  ],
+  "last_updated": "2026-01-22T14:07:23.060886"
+}

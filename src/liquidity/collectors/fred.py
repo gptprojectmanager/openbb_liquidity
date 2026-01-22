@@ -70,6 +70,9 @@ SERIES_MAP: dict[str, str] = {
     # Credit Spreads (Phase 1 market indicators)
     "hy_oas": "BAMLH0A0HYM2",  # High Yield OAS (bps, daily)
     "ig_oas": "BAMLC0A0CM",  # Investment Grade OAS (bps, daily)
+    # Phase 2: Global CB totals via FRED
+    "ecb_total_assets": "ECBASSETSW",  # Weekly, millions EUR
+    "boj_total_assets": "JPNASSETS",  # Monthly, 100 million JPY (not millions!)
 }
 
 # Unit conversions for standardization
@@ -90,6 +93,9 @@ UNIT_MAP: dict[str, str] = {
     # Credit Spreads
     "BAMLH0A0HYM2": "bps",  # Basis points
     "BAMLC0A0CM": "bps",  # Basis points
+    # Global CB totals (Phase 2)
+    "ECBASSETSW": "millions_eur",
+    "JPNASSETS": "100_millions_jpy",  # FRED unit is "100 Million Yen"
 }
 
 
@@ -379,6 +385,75 @@ class FredCollector(BaseCollector[pd.DataFrame]):
             DataFrame with credit spread data (in basis points).
         """
         return await self.collect(["BAMLH0A0HYM2", "BAMLC0A0CM"], start_date, end_date)
+
+    async def collect_ecb_assets(
+        self,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+    ) -> pd.DataFrame:
+        """Convenience method to collect ECB total assets.
+
+        Fetches ECBASSETSW (ECB Total Assets, weekly, millions EUR).
+
+        Note: ECB balance sheet is typically 5-10 trillion EUR (5-10 million in FRED units).
+
+        Args:
+            start_date: Start date for data fetch. Defaults to 30 days ago.
+            end_date: End date for data fetch. Defaults to today.
+
+        Returns:
+            DataFrame with ECB total assets data (in millions EUR).
+        """
+        return await self.collect(["ECBASSETSW"], start_date, end_date)
+
+    async def collect_boj_assets(
+        self,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+    ) -> pd.DataFrame:
+        """Convenience method to collect BoJ total assets.
+
+        Fetches JPNASSETS (BoJ Total Assets, monthly, 100 million JPY).
+
+        Note: BoJ balance sheet is typically 700+ trillion JPY.
+        FRED reports in 100 million JPY units, so 7,000,000 = 700 trillion JPY.
+
+        Args:
+            start_date: Start date for data fetch. Defaults to 30 days ago.
+            end_date: End date for data fetch. Defaults to today.
+
+        Returns:
+            DataFrame with BoJ total assets data (in 100 million JPY).
+        """
+        return await self.collect(["JPNASSETS"], start_date, end_date)
+
+    async def collect_global_cb_totals(
+        self,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+    ) -> pd.DataFrame:
+        """Convenience method to collect all central bank total assets.
+
+        Fetches Fed (WALCL), ECB (ECBASSETSW), and BoJ (JPNASSETS) total assets.
+
+        Note on units:
+        - WALCL: millions USD (weekly)
+        - ECBASSETSW: millions EUR (weekly)
+        - JPNASSETS: 100 million JPY (monthly)
+
+        For Global Liquidity Index calculation, these need to be converted to a common
+        currency (typically USD) using current exchange rates.
+
+        Args:
+            start_date: Start date for data fetch. Defaults to 30 days ago.
+            end_date: End date for data fetch. Defaults to today.
+
+        Returns:
+            DataFrame with all CB total assets data.
+        """
+        return await self.collect(
+            ["WALCL", "ECBASSETSW", "JPNASSETS"], start_date, end_date
+        )
 
 
 # Register collector with the registry

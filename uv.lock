@@ -1077,8 +1077,10 @@ name = "liquidity-monitor"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "beautifulsoup4" },
     { name = "dbnomics" },
     { name = "httpx" },
+    { name = "lxml" },
     { name = "openbb" },
     { name = "prometheus-client" },
     { name = "psycopg2-binary" },
@@ -1112,8 +1114,10 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "beautifulsoup4", specifier = ">=4.12.0" },
     { name = "dbnomics", specifier = ">=1.2.7" },
     { name = "httpx", specifier = ">=0.27.0" },
+    { name = "lxml", specifier = ">=5.0.0" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.10.0" },
     { name = "openbb", specifier = ">=4.0.0" },
     { name = "prometheus-client", specifier = ">=0.21.0" },
